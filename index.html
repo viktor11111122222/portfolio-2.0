@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VICA | Portfolio</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loader">
+    <canvas id="loaderHexCanvas"></canvas>
+    <div class="loader-bg-grid"></div>
+    <div class="loader-content">
+      <div class="loader-glitch" data-text="VICA">VICA</div>
+      <div class="loader-tagline">PORTFOLIO.SYSTEM</div>
+      <div class="loader-terminal" id="loaderTerminal"></div>
+      <div class="loader-bar-wrap">
+        <div class="loader-bar">
+          <div class="loader-fill" id="loaderFill"></div>
+          <div class="loader-bar-glow"></div>
+        </div>
+        <span class="loader-pct" id="loaderPct">0%</span>
+      </div>
+    </div>
+    <div class="loader-corner lc-tl"></div>
+    <div class="loader-corner lc-tr"></div>
+    <div class="loader-corner lc-bl"></div>
+    <div class="loader-corner lc-br"></div>
+  </div>
+
+  <!-- Custom Cursor -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="cursor-trail" id="cursorTrail"></div>
+
+  <!-- Navigation -->
+  <nav id="navbar">
+    <div class="nav-logo">
+      <span class="logo-bracket">[</span>
+      <span class="logo-text">VICA</span>
+      <span class="logo-bracket">]</span>
+    </div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#hero"     class="nav-link" data-text="HOME">HOME</a></li>
+      <li><a href="#about"    class="nav-link" data-text="ABOUT">ABOUT</a></li>
+      <li><a href="#skills"   class="nav-link" data-text="SKILLS">SKILLS</a></li>
+      <li><a href="#projects" class="nav-link" data-text="PROJECTS">PROJECTS</a></li>
+      <li><a href="#contact"  class="nav-link" data-text="CONTACT">CONTACT</a></li>
+    </ul>
+    <div class="nav-status">
+      <span class="status-dot-pulse"></span>
+      <span class="nav-status-text">ONLINE</span>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ╔══════════════════════════════╗ -->
+  <!-- ║         HERO SECTION         ║ -->
+  <!-- ╚══════════════════════════════╝ -->
+  <section id="hero">
+    <canvas id="particleCanvas"></canvas>
+    <div class="hero-grid"></div>
+    <div class="hero-glow g1"></div>
+    <div class="hero-glow g2"></div>
+    <div class="hero-glow g3"></div>
+    <div class="hero-noise"></div>
+
+    <div class="hero-content">
+
+      <!-- LEFT: Text -->
+      <div class="hero-left" id="heroLeft">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span>FRONTEND &amp; APP DEVELOPER</span>
+        </div>
+        <h1 class="hero-title">
+          <span class="glitch" data-text="HELLO,">HELLO,</span>
+          <br>
+          <span class="glitch hero-name" data-text="I'M VICA">I'M VICA</span>
+        </h1>
+        <p class="hero-subtitle">
+          <span class="typewriter" id="typewriter"></span><span class="cursor-blink">_</span>
+        </p>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number" data-count="50">0</span><span class="stat-plus">+</span>
+            <span class="stat-label">PROJECTS</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number" data-count="3">0</span><span class="stat-plus">+</span>
+            <span class="stat-label">YRS EXP</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number" data-count="20">0</span><span class="stat-plus">+</span>
+            <span class="stat-label">CLIENTS</span>
+          </div>
+        </div>
+        <div class="hero-buttons">
+          <a href="#projects" class="btn btn-primary">
+            <span class="btn-text">VIEW WORK</span>
+            <span class="btn-shine"></span>
+          </a>
+          <a href="#contact" class="btn btn-secondary">CONTACT ME</a>
+        </div>
+      </div>
+
+      <!-- RIGHT: Person -->
+      <div class="hero-right" id="heroRight">
+        <div class="person-universe">
+
+          <!-- Orbit rings -->
+          <div class="orbit-ring or-1"></div>
+          <div class="orbit-ring or-2"></div>
+          <div class="orbit-ring or-3"></div>
+
+          <!-- Orbiting dots -->
+          <div class="orbit-dot-wrap odw-1"><div class="orbit-dot od-cyan"></div></div>
+          <div class="orbit-dot-wrap odw-2"><div class="orbit-dot od-purple"></div></div>
+          <div class="orbit-dot-wrap odw-3"><div class="orbit-dot od-pink"></div></div>
+
+          <!-- Floating hex -->
+          <div class="hex-deco hd-1">⬡</div>
+          <div class="hex-deco hd-2">⬡</div>
+          <div class="hex-deco hd-3">⬢</div>
+          <div class="hex-deco hd-4">⬡</div>
+
+          <!-- Data tags -->
+          <div class="data-tag dt-1">
+            <div class="dt-line"></div>
+            <div class="dt-body">
+              <span class="dt-key">NEURAL.ID</span>
+              <span class="dt-val">0x7F2A9</span>
+            </div>
+          </div>
+          <div class="data-tag dt-2">
+            <div class="dt-line"></div>
+            <div class="dt-body">
+              <span class="dt-key">STATUS</span>
+              <span class="dt-val online">ACTIVE</span>
+            </div>
+          </div>
+          <div class="data-tag dt-3">
+            <div class="dt-line"></div>
+            <div class="dt-body">
+              <span class="dt-key">SKILL.LVL</span>
+              <span class="dt-val">MAX</span>
+            </div>
+          </div>
+
+          <!-- Main Image Wrapper -->
+          <div class="person-frame">
+            <div class="pf-glow-outer"></div>
+            <div class="pf-glow-inner"></div>
+            <div class="pf-scan-line"></div>
+            <div class="pf-hologram-grid"></div>
+            <div class="pf-image-inner">
+              <!-- Your photo goes here — replace person.jpg -->
+              <img
+                src="person.jpg"
+                alt="Portfolio Owner"
+                class="person-img"
+                id="personImg"
+                onerror="document.getElementById('personFallback').style.display='flex'; this.style.display='none'"
+              />
+              <!-- Fallback holographic silhouette -->
+              <div class="person-fallback" id="personFallback">
+                <svg viewBox="0 0 220 340" xmlns="http://www.w3.org/2000/svg" class="silhouette">
+                  <defs>
+                    <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%"   stop-color="#00e5ff" stop-opacity="0.9"/>
+                      <stop offset="50%"  stop-color="#9400ff" stop-opacity="0.8"/>
+                      <stop offset="100%" stop-color="#ff0064" stop-opacity="0.7"/>
+                    </linearGradient>
+                    <filter id="glow">
+                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                  </defs>
+                  <!-- Head -->
+                  <ellipse cx="110" cy="62" rx="42" ry="50" fill="url(#sg)" filter="url(#glow)" opacity="0.85"/>
+                  <!-- Neck -->
+                  <rect x="98" y="108" width="24" height="22" fill="url(#sg)" opacity="0.85"/>
+                  <!-- Shoulders -->
+                  <path d="M 30 128 Q 20 130 10 145 L 5 200 L 55 200 L 55 145 Q 55 130 70 126 Z" fill="url(#sg)" filter="url(#glow)" opacity="0.8"/>
+                  <path d="M 190 128 Q 200 130 210 145 L 215 200 L 165 200 L 165 145 Q 165 130 150 126 Z" fill="url(#sg)" filter="url(#glow)" opacity="0.8"/>
+                  <!-- Body -->
+                  <path d="M 55 126 Q 75 118 110 118 Q 145 118 165 126 L 168 200 L 158 340 L 62 340 L 52 200 Z" fill="url(#sg)" filter="url(#glow)" opacity="0.8"/>
+                  <!-- Scan lines overlay -->
+                  <rect x="0" y="0" width="220" height="340" fill="url(#sg)" opacity="0.05"/>
+                </svg>
+                <div class="fallback-scanlines"></div>
+                <div class="fallback-flicker"></div>
+              </div>
+              <div class="rgb-aberration"></div>
+            </div>
+            <div class="pf-corner c-tl"></div>
+            <div class="pf-corner c-tr"></div>
+            <div class="pf-corner c-bl"></div>
+            <div class="pf-corner c-br"></div>
+          </div>
+
+          <!-- Floating code elements -->
+          <div class="float-code fc-1">01</div>
+          <div class="float-code fc-2">10</div>
+          <div class="float-code fc-3">&lt;/&gt;</div>
+          <div class="float-code fc-4">{ }</div>
+          <div class="float-code fc-5">[]</div>
+
+          <!-- Local particle canvas -->
+          <canvas id="personCanvas" class="person-canvas"></canvas>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="scroll-indicator">
+      <div class="scroll-mouse">
+        <div class="scroll-wheel"></div>
+      </div>
+      <div class="scroll-arrows">
+        <span></span><span></span><span></span>
+      </div>
+      <span class="scroll-label">SCROLL</span>
+    </div>
+  </section>
+
+  <!-- ╔══════════════════════════════╗ -->
+  <!-- ║        ABOUT SECTION         ║ -->
+  <!-- ╚══════════════════════════════╝ -->
+  <section id="about" class="section">
+    <div class="section-bg-text" data-text="ABOUT">ABOUT</div>
+    <div class="container">
+
+      <div class="section-header" data-aos="fade-down">
+        <span class="section-tag">◈ 01 // INTRODUCTION</span>
+        <h2 class="section-title">ABOUT ME</h2>
+        <div class="title-line"></div>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-text-col" data-aos="fade-right">
+          <p class="about-intro">
+            I'm a <span class="neon-text">Frontend &amp; App Developer</span> who builds
+            next-generation digital experiences that push the boundaries of the web and mobile.
+          </p>
+          <p class="about-body">
+            Specializing in HTML, CSS, JavaScript, React and React Native,
+            I craft interfaces that are visually stunning, buttery-smooth,
+            and pixel-perfect across web and mobile platforms.
+          </p>
+          <div class="about-details">
+            <div class="detail-row">
+              <span class="dk">LOCATION</span>
+              <span class="ds">//</span>
+              <span class="dv">Serbia, EU</span>
+            </div>
+            <div class="detail-row">
+              <span class="dk">AVAILABILITY</span>
+              <span class="ds">//</span>
+              <span class="dv online">OPEN TO WORK</span>
+            </div>
+            <div class="detail-row">
+              <span class="dk">FOCUS</span>
+              <span class="ds">//</span>
+              <span class="dv">React · React Native · Web</span>
+            </div>
+          </div>
+          <a href="#" class="btn btn-primary" download>DOWNLOAD CV <span class="btn-arrow">↗</span></a>
+        </div>
+
+        <div class="about-visual-col" data-aos="fade-left">
+          <div class="about-photo-wrap">
+            <!-- Ambient glows behind person -->
+            <div class="aph-glow aph-cyan"></div>
+            <div class="aph-glow aph-purple"></div>
+            <!-- Ground line -->
+            <div class="aph-ground"></div>
+            <!-- Replace photo.png with your transparent-bg portrait -->
+            <img
+              src="photo.png"
+              alt="Vica"
+              class="about-photo"
+              id="aboutPhoto"
+              onerror="this.style.display='none'; document.getElementById('aboutPhotoFallback').style.display='block'"
+            />
+            <!-- Fallback silhouette if no photo yet -->
+            <div class="about-photo-fallback" id="aboutPhotoFallback">
+              <svg viewBox="0 0 200 420" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="apg" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.8"/>
+                    <stop offset="100%" stop-color="#bf00ff" stop-opacity="0.6"/>
+                  </linearGradient>
+                  <filter id="apf"><feGaussianBlur stdDeviation="2"/></filter>
+                </defs>
+                <!-- Head -->
+                <circle cx="100" cy="72" r="40" fill="url(#apg)" opacity="0.9"/>
+                <!-- Neck -->
+                <rect x="88" y="108" width="24" height="20" fill="url(#apg)" opacity="0.85"/>
+                <!-- Shoulders/torso -->
+                <path d="M 30 128 Q 60 118 100 118 Q 140 118 170 128 L 175 260 L 25 260 Z" fill="url(#apg)" opacity="0.85"/>
+                <!-- Body lower -->
+                <path d="M 35 260 L 25 420 L 85 420 L 100 300 L 115 420 L 175 420 L 165 260 Z" fill="url(#apg)" opacity="0.8"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ╔══════════════════════════════╗ -->
+  <!-- ║        SKILLS SECTION        ║ -->
+  <!-- ╚══════════════════════════════╝ -->
+  <section id="skills" class="section">
+    <div class="section-bg-text" data-text="SKILLS">SKILLS</div>
+    <div class="container">
+
+      <div class="section-header" data-aos="fade-down">
+        <span class="section-tag">◈ 02 // EXPERTISE</span>
+        <h2 class="section-title">SKILL SET</h2>
+        <div class="title-line"></div>
+      </div>
+
+      <div class="skills-new-layout">
+
+        <!-- ── Radar Chart ── -->
+        <div class="radar-col" data-aos="fade-right">
+          <div class="radar-wrapper">
+            <div class="radar-glow-bg"></div>
+            <canvas id="radarChart"></canvas>
+          </div>
+          <p class="radar-label">SKILL MATRIX</p>
+        </div>
+
+        <!-- ── Compact Skill Cards ── -->
+        <div class="skills-compact-col" data-aos="fade-left">
+
+          <div class="sc-compact" style="--d:0s">
+            <div class="scc-head">
+              <span class="scc-icon">&#60;&#47;&#62;</span>
+              <span class="scc-name">FRONTEND</span>
+            </div>
+            <ul class="scc-list">
+              <li><span>HTML / CSS</span><span class="scc-pct">97%</span></li>
+              <li><span>JavaScript</span><span class="scc-pct">93%</span></li>
+              <li><span>React / Next.js</span><span class="scc-pct">90%</span></li>
+            </ul>
+          </div>
+
+          <div class="sc-compact" style="--d:0.1s">
+            <div class="scc-head">
+              <span class="scc-icon">📱</span>
+              <span class="scc-name">MOBILE</span>
+            </div>
+            <ul class="scc-list">
+              <li><span>React Native</span><span class="scc-pct">88%</span></li>
+              <li><span>Expo</span><span class="scc-pct">85%</span></li>
+              <li><span>iOS &amp; Android</span><span class="scc-pct">82%</span></li>
+            </ul>
+          </div>
+
+          <div class="sc-compact" style="--d:0.2s">
+            <div class="scc-head">
+              <span class="scc-icon">◈</span>
+              <span class="scc-name">UI / UX</span>
+            </div>
+            <ul class="scc-list">
+              <li><span>Figma</span><span class="scc-pct">88%</span></li>
+              <li><span>CSS Animations</span><span class="scc-pct">95%</span></li>
+              <li><span>Responsive Design</span><span class="scc-pct">96%</span></li>
+            </ul>
+          </div>
+
+          <div class="sc-compact" style="--d:0.3s">
+            <div class="scc-head">
+              <span class="scc-icon">⚡</span>
+              <span class="scc-name">TOOLS</span>
+            </div>
+            <ul class="scc-list">
+              <li><span>Git / GitHub</span><span class="scc-pct">92%</span></li>
+              <li><span>Firebase</span><span class="scc-pct">80%</span></li>
+              <li><span>Tailwind / Styled</span><span class="scc-pct">91%</span></li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ╔══════════════════════════════╗ -->
+  <!-- ║       PROJECTS SECTION       ║ -->
+  <!-- ╚══════════════════════════════╝ -->
+  <section id="projects" class="section">
+    <div class="section-bg-text" data-text="WORK">WORK</div>
+
+    <!-- Background circuit canvas -->
+    <canvas id="projBgCanvas" class="proj-bg-canvas"></canvas>
+
+    <!-- Left decoration -->
+    <div class="proj-deco left-deco">
+      <div class="ld-label">PROJECT<br>SHOW<br>CASE</div>
+      <div class="ld-bars">
+        <div class="ld-bar" style="--h:0.7; --d:0.0s"></div>
+        <div class="ld-bar" style="--h:0.4; --d:0.2s"></div>
+        <div class="ld-bar" style="--h:0.9; --d:0.4s"></div>
+        <div class="ld-bar" style="--h:0.5; --d:0.1s"></div>
+        <div class="ld-bar" style="--h:0.85; --d:0.3s"></div>
+        <div class="ld-bar" style="--h:0.3; --d:0.5s"></div>
+        <div class="ld-bar" style="--h:0.75; --d:0.2s"></div>
+        <div class="ld-bar" style="--h:0.6; --d:0.4s"></div>
+        <div class="ld-bar" style="--h:0.5; --d:0.1s"></div>
+      </div>
+      <div class="ld-node"></div>
+    </div>
+
+    <!-- Right decoration -->
+    <div class="proj-deco right-deco">
+      <div class="rd-hex">
+        <div class="rd-hex-ring"></div>
+        <div class="rd-hex-inner">
+          <span class="rd-num">04</span>
+          <span class="rd-sub">FEATURED</span>
+        </div>
+      </div>
+      <div class="rd-lines">
+        <div class="rdl" style="--w:80%; --d:0s"></div>
+        <div class="rdl" style="--w:50%; --d:0.2s"></div>
+        <div class="rdl" style="--w:65%; --d:0.4s"></div>
+        <div class="rdl" style="--w:90%; --d:0.1s"></div>
+        <div class="rdl" style="--w:40%; --d:0.3s"></div>
+      </div>
+      <div class="rd-tag">
+        <span class="rt-dot"></span>
+        <span>LIVE PROJECTS</span>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="section-header" data-aos="fade-down">
+        <span class="section-tag">◈ 03 // PORTFOLIO</span>
+        <h2 class="section-title">PROJECTS</h2>
+        <div class="title-line"></div>
+      </div>
+
+      <div class="projects-grid">
+
+        <div class="proj-card" data-aos="fade-up" style="--d:0s">
+          <div class="proj-card-inner">
+            <div class="proj-thumb">
+              <canvas class="code-rain-canvas"></canvas>
+              <div class="proj-num">01</div>
+              <div class="proj-overlay">
+                <a href="#" class="proj-link-btn">LIVE ↗</a>
+                <a href="#" class="proj-link-btn">CODE ↗</a>
+              </div>
+            </div>
+            <div class="proj-body">
+              <span class="proj-cat">WEB APP</span>
+              <h3 class="proj-name">CYBER DASHBOARD</h3>
+              <p>Next-gen analytics platform with real-time data visualization and AI-driven insights.</p>
+              <div class="proj-tags">
+                <span>React</span><span>Node.js</span><span>D3.js</span>
+              </div>
+            </div>
+            <div class="proj-glow"></div>
+          </div>
+        </div>
+
+        <div class="proj-card featured" data-aos="fade-up" style="--d:0.1s">
+          <div class="proj-card-inner">
+            <div class="proj-thumb">
+              <canvas class="code-rain-canvas"></canvas>
+              <div class="proj-num">02</div>
+              <div class="proj-overlay">
+                <a href="#" class="proj-link-btn">LIVE ↗</a>
+                <a href="#" class="proj-link-btn">CODE ↗</a>
+              </div>
+            </div>
+            <div class="proj-body">
+              <span class="proj-cat">E-COMMERCE</span>
+              <h3 class="proj-name">NEON MARKET</h3>
+              <p>Futuristic e-commerce with 3D product visualization and immersive UI experience.</p>
+              <div class="proj-tags">
+                <span>Next.js</span><span>Stripe</span><span>Three.js</span>
+              </div>
+            </div>
+            <div class="proj-glow"></div>
+          </div>
+        </div>
+
+        <div class="proj-card" data-aos="fade-up" style="--d:0.2s">
+          <div class="proj-card-inner">
+            <div class="proj-thumb">
+              <canvas class="code-rain-canvas"></canvas>
+              <div class="proj-num">03</div>
+              <div class="proj-overlay">
+                <a href="#" class="proj-link-btn">LIVE ↗</a>
+                <a href="#" class="proj-link-btn">CODE ↗</a>
+              </div>
+            </div>
+            <div class="proj-body">
+              <span class="proj-cat">MOBILE APP</span>
+              <h3 class="proj-name">PULSE SOCIAL</h3>
+              <p>Social platform built for the next generation with augmented reality features.</p>
+              <div class="proj-tags">
+                <span>React Native</span><span>Firebase</span><span>ARKit</span>
+              </div>
+            </div>
+            <div class="proj-glow"></div>
+          </div>
+        </div>
+
+        <div class="proj-card" data-aos="fade-up" style="--d:0.3s">
+          <div class="proj-card-inner">
+            <div class="proj-thumb">
+              <canvas class="code-rain-canvas"></canvas>
+              <div class="proj-num">04</div>
+              <div class="proj-overlay">
+                <a href="#" class="proj-link-btn">LIVE ↗</a>
+                <a href="#" class="proj-link-btn">CODE ↗</a>
+              </div>
+            </div>
+            <div class="proj-body">
+              <span class="proj-cat">AI TOOL</span>
+              <h3 class="proj-name">NEURAL FORGE</h3>
+              <p>AI-powered code generator with natural language processing and real-time preview.</p>
+              <div class="proj-tags">
+                <span>Python</span><span>OpenAI</span><span>FastAPI</span>
+              </div>
+            </div>
+            <div class="proj-glow"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ╔══════════════════════════════╗ -->
+  <!-- ║       CONTACT SECTION        ║ -->
+  <!-- ╚══════════════════════════════╝ -->
+  <section id="contact" class="section">
+    <div class="section-bg-text" data-text="CONNECT">CONNECT</div>
+    <div class="container">
+
+      <div class="section-header" data-aos="fade-down">
+        <span class="section-tag">◈ 04 // REACH OUT</span>
+        <h2 class="section-title">GET IN TOUCH</h2>
+        <div class="title-line"></div>
+      </div>
+
+      <div class="contact-grid">
+
+        <div class="contact-left" data-aos="fade-right">
+          <p class="contact-intro">
+            Ready to build something extraordinary?<br>
+            Let's connect and create the future together.
+          </p>
+          <div class="contact-items">
+            <div class="ci-item">
+              <div class="ci-icon">✉</div>
+              <div class="ci-text">
+                <span class="ci-label">EMAIL</span>
+                <span class="ci-value">vica@example.com</span>
+              </div>
+            </div>
+            <div class="ci-item">
+              <div class="ci-icon">◈</div>
+              <div class="ci-text">
+                <span class="ci-label">DISCORD</span>
+                <span class="ci-value">vica#0001</span>
+              </div>
+            </div>
+            <div class="ci-item">
+              <div class="ci-icon">⚡</div>
+              <div class="ci-text">
+                <span class="ci-label">LOCATION</span>
+                <span class="ci-value">Serbia, EU</span>
+              </div>
+            </div>
+          </div>
+          <div class="social-row">
+            <a href="#" class="soc-btn">GH</a>
+            <a href="#" class="soc-btn">LI</a>
+            <a href="#" class="soc-btn">TW</a>
+            <a href="#" class="soc-btn">BE</a>
+          </div>
+        </div>
+
+        <form class="contact-form" id="contactForm" data-aos="fade-left">
+          <div class="form-row">
+            <div class="form-field">
+              <input type="text" id="fname" placeholder=" " required autocomplete="off">
+              <label for="fname">YOUR NAME</label>
+              <div class="fline"></div>
+            </div>
+            <div class="form-field">
+              <input type="email" id="femail" placeholder=" " required autocomplete="off">
+              <label for="femail">EMAIL ADDRESS</label>
+              <div class="fline"></div>
+            </div>
+          </div>
+          <div class="form-field">
+            <input type="text" id="fsubject" placeholder=" " required autocomplete="off">
+            <label for="fsubject">SUBJECT</label>
+            <div class="fline"></div>
+          </div>
+          <div class="form-field">
+            <textarea id="fmessage" rows="5" placeholder=" " required></textarea>
+            <label for="fmessage">MESSAGE</label>
+            <div class="fline"></div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">
+            <span class="btn-text">TRANSMIT MESSAGE</span>
+            <span class="btn-shine"></span>
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer">
+    <div class="footer-line"></div>
+    <div class="footer-content">
+      <span class="footer-logo">[VICA]</span>
+      <span class="footer-copy">© 2026 — ALL SYSTEMS OPERATIONAL</span>
+      <span class="footer-credit">BUILT WITH &lt;3 &amp; CODE</span>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
