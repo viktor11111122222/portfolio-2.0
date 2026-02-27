@@ -11,6 +11,12 @@
 </head>
 <body>
 
+  <!-- Scroll Progress Bar -->
+  <div id="scrollProgressBar"></div>
+
+  <!-- Northern Lights Background -->
+  <div class="northern-lights" id="northernLights"></div>
+
   <!-- Loading Screen -->
   <div id="loader">
     <canvas id="loaderHexCanvas"></canvas>
@@ -35,8 +41,7 @@
 
   <!-- Custom Cursor -->
   <div class="cursor-dot" id="cursorDot"></div>
-  <div class="cursor-ring" id="cursorRing"></div>
-  <div class="cursor-trail" id="cursorTrail"></div>
+  <div class="cursor-ring" id="cursorRing"><span class="cursor-label" id="cursorLabel"></span></div>
 
   <!-- Navigation -->
   <nav id="navbar">
@@ -234,6 +239,9 @@
     </div>
   </section>
 
+  <!-- Floating particle divider -->
+  <div class="section-divider"><canvas class="divider-particles"></canvas></div>
+
   <!-- ╔══════════════════════════════╗ -->
   <!-- ║        ABOUT SECTION         ║ -->
   <!-- ╚══════════════════════════════╝ -->
@@ -249,6 +257,9 @@
 
       <div class="about-grid">
         <div class="about-text-col" data-aos="fade-right">
+          <div class="morphing-text-block">
+            I AM A <span class="morphing-word" id="morphingWord">DEVELOPER</span>
+          </div>
           <p class="about-intro">
             I'm a <span class="neon-text">Frontend &amp; App Developer</span> who builds
             next-generation digital experiences that push the boundaries of the web and mobile.
@@ -258,18 +269,18 @@
             I craft interfaces that are visually stunning, buttery-smooth,
             and pixel-perfect across web and mobile platforms.
           </p>
-          <div class="about-details">
-            <div class="detail-row">
+          <div class="about-details" data-stagger>
+            <div class="detail-row stagger-item">
               <span class="dk">LOCATION</span>
               <span class="ds">//</span>
               <span class="dv">Serbia, EU</span>
             </div>
-            <div class="detail-row">
+            <div class="detail-row stagger-item">
               <span class="dk">AVAILABILITY</span>
               <span class="ds">//</span>
               <span class="dv online">OPEN TO WORK</span>
             </div>
-            <div class="detail-row">
+            <div class="detail-row stagger-item">
               <span class="dk">FOCUS</span>
               <span class="ds">//</span>
               <span class="dv">React · React Native · Web</span>
@@ -319,6 +330,9 @@
     </div>
   </section>
 
+  <!-- Floating particle divider -->
+  <div class="section-divider"><canvas class="divider-particles"></canvas></div>
+
   <!-- ╔══════════════════════════════╗ -->
   <!-- ║        SKILLS SECTION        ║ -->
   <!-- ╚══════════════════════════════╝ -->
@@ -344,53 +358,53 @@
         </div>
 
         <!-- ── Compact Skill Cards ── -->
-        <div class="skills-compact-col" data-aos="fade-left">
+        <div class="skills-compact-col" data-aos="fade-left" data-stagger>
 
-          <div class="sc-compact" style="--d:0s">
+          <div class="sc-compact stagger-item" style="--d:0s">
             <div class="scc-head">
               <span class="scc-icon">&#60;&#47;&#62;</span>
               <span class="scc-name">FRONTEND</span>
             </div>
             <ul class="scc-list">
-              <li><span>HTML / CSS</span><span class="scc-pct">97%</span></li>
-              <li><span>JavaScript</span><span class="scc-pct">93%</span></li>
-              <li><span>React / Next.js</span><span class="scc-pct">90%</span></li>
+              <li><span>HTML / CSS</span><span class="scc-pct" data-count="97">97%</span></li>
+              <li><span>JavaScript</span><span class="scc-pct" data-count="93">93%</span></li>
+              <li><span>React / Next.js</span><span class="scc-pct" data-count="90">90%</span></li>
             </ul>
           </div>
 
-          <div class="sc-compact" style="--d:0.1s">
+          <div class="sc-compact stagger-item" style="--d:0.1s">
             <div class="scc-head">
               <span class="scc-icon">📱</span>
               <span class="scc-name">MOBILE</span>
             </div>
             <ul class="scc-list">
-              <li><span>React Native</span><span class="scc-pct">88%</span></li>
-              <li><span>Expo</span><span class="scc-pct">85%</span></li>
-              <li><span>iOS &amp; Android</span><span class="scc-pct">82%</span></li>
+              <li><span>React Native</span><span class="scc-pct" data-count="88">88%</span></li>
+              <li><span>Expo</span><span class="scc-pct" data-count="85">85%</span></li>
+              <li><span>iOS &amp; Android</span><span class="scc-pct" data-count="82">82%</span></li>
             </ul>
           </div>
 
-          <div class="sc-compact" style="--d:0.2s">
+          <div class="sc-compact stagger-item" style="--d:0.2s">
             <div class="scc-head">
               <span class="scc-icon">◈</span>
               <span class="scc-name">UI / UX</span>
             </div>
             <ul class="scc-list">
-              <li><span>Figma</span><span class="scc-pct">88%</span></li>
-              <li><span>CSS Animations</span><span class="scc-pct">95%</span></li>
-              <li><span>Responsive Design</span><span class="scc-pct">96%</span></li>
+              <li><span>Figma</span><span class="scc-pct" data-count="88">88%</span></li>
+              <li><span>CSS Animations</span><span class="scc-pct" data-count="95">95%</span></li>
+              <li><span>Responsive Design</span><span class="scc-pct" data-count="96">96%</span></li>
             </ul>
           </div>
 
-          <div class="sc-compact" style="--d:0.3s">
+          <div class="sc-compact stagger-item" style="--d:0.3s">
             <div class="scc-head">
               <span class="scc-icon">⚡</span>
               <span class="scc-name">TOOLS</span>
             </div>
             <ul class="scc-list">
-              <li><span>Git / GitHub</span><span class="scc-pct">92%</span></li>
-              <li><span>Firebase</span><span class="scc-pct">80%</span></li>
-              <li><span>Tailwind / Styled</span><span class="scc-pct">91%</span></li>
+              <li><span>Git / GitHub</span><span class="scc-pct" data-count="92">92%</span></li>
+              <li><span>Firebase</span><span class="scc-pct" data-count="80">80%</span></li>
+              <li><span>Tailwind / Styled</span><span class="scc-pct" data-count="91">91%</span></li>
             </ul>
           </div>
 
@@ -398,6 +412,9 @@
       </div>
     </div>
   </section>
+
+  <!-- Floating particle divider -->
+  <div class="section-divider"><canvas class="divider-particles"></canvas></div>
 
   <!-- ╔══════════════════════════════╗ -->
   <!-- ║       PROJECTS SECTION       ║ -->
@@ -549,6 +566,9 @@
     </div>
   </section>
 
+  <!-- Floating particle divider -->
+  <div class="section-divider"><canvas class="divider-particles"></canvas></div>
+
   <!-- ╔══════════════════════════════╗ -->
   <!-- ║       CONTACT SECTION        ║ -->
   <!-- ╚══════════════════════════════╝ -->
@@ -569,22 +589,22 @@
             Ready to build something extraordinary?<br>
             Let's connect and create the future together.
           </p>
-          <div class="contact-items">
-            <div class="ci-item">
+          <div class="contact-items" data-stagger>
+            <div class="ci-item stagger-item">
               <div class="ci-icon">✉</div>
               <div class="ci-text">
                 <span class="ci-label">EMAIL</span>
                 <span class="ci-value">vica@example.com</span>
               </div>
             </div>
-            <div class="ci-item">
+            <div class="ci-item stagger-item">
               <div class="ci-icon">◈</div>
               <div class="ci-text">
                 <span class="ci-label">DISCORD</span>
                 <span class="ci-value">vica#0001</span>
               </div>
             </div>
-            <div class="ci-item">
+            <div class="ci-item stagger-item">
               <div class="ci-icon">⚡</div>
               <div class="ci-text">
                 <span class="ci-label">LOCATION</span>

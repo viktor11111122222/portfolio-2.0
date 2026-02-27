@@ -43,7 +43,8 @@ a { color: inherit; text-decoration: none; cursor: none; }
 img { display: block; max-width: 100%; }
 ul { list-style: none; }
 button { cursor: none; border: none; background: none; font-family: inherit; }
-input, textarea { font-family: inherit; }
+input, textarea, select { font-family: inherit; }
+html, *, *::before, *::after { cursor: none !important; }
 
 /* ── SCROLLBAR ──────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; }
@@ -190,6 +191,7 @@ input, textarea { font-family: inherit; }
   pointer-events: none;
   box-shadow: 0 0 10px var(--cyan), 0 0 20px var(--cyan);
   transition: width 0.2s, height 0.2s, background 0.2s;
+  will-change: left, top;
 }
 .cursor-ring {
   position: fixed; z-index: 9999;
@@ -198,19 +200,13 @@ input, textarea { font-family: inherit; }
   border-radius: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
   transition: transform 0.15s ease, width 0.3s, height 0.3s, border-color 0.3s;
-}
-.cursor-trail {
-  position: fixed; z-index: 9998;
-  width: 60px; height: 60px;
-  border: 1px solid rgba(191,0,255,0.2);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  transition: transform 0.4s ease;
+  will-change: left, top;
 }
 body.hovering .cursor-dot   { width: 10px; height: 10px; background: var(--purple); box-shadow: 0 0 15px var(--purple); }
 body.hovering .cursor-ring  { width: 48px; height: 48px; border-color: var(--purple); }
+body.cursor-on-input .cursor-dot { opacity: 0 !important; }
 
 /* ╔══════════════════════════════════════════════════════════╗ */
 /* ║                      NAVIGATION                          ║ */
@@ -1886,4 +1882,130 @@ body.hovering .cursor-ring  { width: 48px; height: 48px; border-color: var(--pur
   width: 100%;
   z-index: 2;
   pointer-events: none;
+}
+
+/* ╔══════════════════════════════════════════════════════════╗ */
+/* ║              NEW VISUAL EFFECTS                           ║ */
+/* ╚══════════════════════════════════════════════════════════╝ */
+
+/* ── SCROLL PROGRESS BAR ── */
+#scrollProgressBar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: 0%;
+  z-index: 9999;
+  background: linear-gradient(90deg, var(--cyan), var(--purple), var(--pink));
+  box-shadow: 0 0 8px var(--cyan), 0 0 20px rgba(0,229,255,0.4);
+  pointer-events: none;
+  transition: width 0.08s linear;
+}
+
+
+/* ── CURSOR LABEL ── */
+.cursor-label {
+  font-family: var(--ff-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.16em;
+  color: var(--cyan);
+  pointer-events: none;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+body.cursor-has-label .cursor-label { opacity: 1; }
+body.cursor-has-label .cursor-ring {
+  width: 52px; height: 52px;
+  border-color: rgba(0,229,255,0.75);
+  transition: width 0.25s ease, height 0.25s ease, border-color 0.25s ease;
+}
+
+/* ── CLICK RIPPLE ── */
+.click-ripple {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9996;
+  border: 1px solid;
+}
+@keyframes click-ripple-anim {
+  0%   { transform: translate(-50%, -50%) scale(1);  opacity: 0.6; }
+  100% { transform: translate(-50%, -50%) scale(18); opacity: 0; }
+}
+
+/* ── NORTHERN LIGHTS ── */
+.northern-lights {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.nl-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  mix-blend-mode: screen;
+  transform: translate(-50%, -50%);
+}
+
+/* ── SECTION DIVIDERS (floating particles) ── */
+.section-divider {
+  position: relative;
+  height: 80px;
+  pointer-events: none;
+}
+.divider-particles {
+  position: absolute;
+  top: -50px; left: 0;
+  width: 100%;
+  height: 180px;
+  pointer-events: none;
+}
+
+/* ── MORPHING TEXT ── */
+.morphing-text-block {
+  font-family: var(--ff-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.28em;
+  color: var(--text3);
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  margin-bottom: 1.2rem;
+}
+.morphing-word {
+  color: var(--cyan);
+  text-shadow: 0 0 12px var(--glow-c);
+  display: inline-flex;
+  min-width: 120px;
+}
+.morph-char {
+  display: inline-block;
+  transition: opacity 0.14s ease, transform 0.14s ease;
+}
+.morph-char.exit {
+  opacity: 0;
+  transform: translateY(-7px) scale(0.75);
+}
+.morph-char.enter {
+  opacity: 0;
+  transform: translateY(7px) scale(0.75);
+}
+
+/* ── 3D TILT ON ABOUT VISUAL COL ── */
+.about-visual-col {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* ── STAGGER REVEAL ── */
+.stagger-item {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.stagger-item.stagger-in {
+  opacity: 1;
+  transform: none;
 }

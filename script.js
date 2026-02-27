@@ -199,27 +199,21 @@ const randInt = (min, max) => Math.floor(rand(min, max));
 (function initCursor() {
   const dot   = $('#cursorDot');
   const ring  = $('#cursorRing');
-  const trail = $('#cursorTrail');
 
   let mx = 0, my = 0;
   let rx = 0, ry = 0;
-  let tx = 0, ty = 0;
 
   document.addEventListener('mousemove', e => {
     mx = e.clientX; my = e.clientY;
-    dot.style.left = mx + 'px';
-    dot.style.top  = my + 'px';
-  });
+  }, { passive: true });
 
   function updateRing() {
+    dot.style.left  = mx + 'px';
+    dot.style.top   = my + 'px';
     rx = lerp(rx, mx, 0.18);
     ry = lerp(ry, my, 0.18);
-    tx = lerp(tx, mx, 0.08);
-    ty = lerp(ty, my, 0.08);
-    ring.style.left  = rx + 'px';
-    ring.style.top   = ry + 'px';
-    trail.style.left = tx + 'px';
-    trail.style.top  = ty + 'px';
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
     requestAnimationFrame(updateRing);
   }
   updateRing();
@@ -237,9 +231,11 @@ const randInt = (min, max) => Math.floor(rand(min, max));
   const hoverEls = 'a, button, .skill-card, .proj-card, .tech-item, .soc-btn';
   document.addEventListener('mouseover', e => {
     if (e.target.closest(hoverEls)) document.body.classList.add('hovering');
+    if (e.target.closest('input, textarea')) document.body.classList.add('cursor-on-input');
   });
   document.addEventListener('mouseout', e => {
     if (e.target.closest(hoverEls)) document.body.classList.remove('hovering');
+    if (e.target.closest('input, textarea')) document.body.classList.remove('cursor-on-input');
   });
 })();
 
@@ -264,7 +260,7 @@ const randInt = (min, max) => Math.floor(rand(min, max));
     navLinkEls.forEach(l => {
       l.classList.toggle('active', l.getAttribute('href') === '#' + currentId);
     });
-  });
+  }, { passive: true });
 
   toggle.addEventListener('click', () => {
     links.classList.toggle('open');
@@ -648,7 +644,7 @@ function animateHeroStats() {
       const ratio = rect.top / window.innerHeight;
       el.style.transform = `translate(-50%, calc(-50% + ${ratio * 40}px))`;
     });
-  });
+  }, { passive: true });
 })();
 
 /* ═══════════════════════════════════════════════════════════
@@ -670,7 +666,7 @@ function animateHeroStats() {
         translateZ(8px)
         translateY(-4px)
       `;
-    });
+    }, { passive: true });
 
     card.addEventListener('mouseleave', () => {
       card.style.transform = '';
@@ -827,7 +823,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 
     const speed = clamp(Math.abs(d) * 0.1, 0, 1);
     heroGrid.style.opacity = clamp(1 - s / window.innerHeight, 0, 1);
-  });
+  }, { passive: true });
 })();
 
 /* ═══════════════════════════════════════════════════════════
@@ -847,7 +843,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
       rotateY(${x * 6}deg)
       rotateX(${-y * 4}deg)
     `;
-  });
+  }, { passive: true });
 
   universe.addEventListener('mouseleave', () => {
     universe.style.transform   = '';
@@ -1059,77 +1055,6 @@ document.addEventListener('visibilitychange', () => {
     }
   }
 
-  function drawSkillPolygon(progress) {
-    // Filled area
-    ctx.beginPath();
-    for (let i = 0; i < SIDES; i++) {
-      const p = pt(i, skills[i].value * progress);
-      i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
-    }
-    ctx.closePath();
-
-    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
-    grad.addColorStop(0,   'rgba(0,229,255,0.30)');
-    grad.addColorStop(0.5, 'rgba(191,0,255,0.18)');
-    grad.addColorStop(1,   'rgba(255,0,100,0.06)');
-    ctx.fillStyle = grad;
-    ctx.fill();
-
-    // Glowing stroke
-    ctx.shadowBlur   = 18;
-    ctx.shadowColor  = '#00e5ff';
-    ctx.strokeStyle  = '#00e5ff';
-    ctx.lineWidth    = 1.8;
-    ctx.stroke();
-    ctx.shadowBlur   = 0;
-  }
-
-  function drawDots(progress) {
-    skills.forEach((sk, i) => {
-      const p = pt(i, sk.value * progress);
-      // Dot glow
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
-      const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 8);
-      g.addColorStop(0,   sk.color + 'aa');
-      g.addColorStop(1,   'transparent');
-      ctx.fillStyle  = g;
-      ctx.fill();
-      // Solid dot
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-      ctx.fillStyle   = sk.color;
-      ctx.shadowBlur  = 12;
-      ctx.shadowColor = sk.color;
-      ctx.fill();
-      ctx.shadowBlur  = 0;
-    });
-  }
-
-  function drawLabels(progress) {
-    if (progress < 0.6) return;
-    const alpha = clamp((progress - 0.6) / 0.4, 0, 1);
-    ctx.globalAlpha = alpha;
-
-    skills.forEach((sk, i) => {
-      const lp = pt(i, 1.28);
-      // Skill name
-      ctx.fillStyle = sk.color;
-      ctx.font      = `bold ${10 * DPR / DPR}px "Share Tech Mono"`;
-      ctx.textAlign = 'center';
-      ctx.shadowBlur  = 8;
-      ctx.shadowColor = sk.color;
-      ctx.fillText(sk.label, lp.x, lp.y - 3);
-      ctx.shadowBlur  = 0;
-      // Percentage
-      ctx.fillStyle = 'rgba(200,214,246,0.55)';
-      ctx.font      = `${9 * DPR / DPR}px "Share Tech Mono"`;
-      ctx.fillText(sk.pct, lp.x, lp.y + 11);
-    });
-
-    ctx.globalAlpha = 1;
-  }
-
   // Center label
   function drawCenter() {
     ctx.fillStyle = 'rgba(0,229,255,0.06)';
@@ -1144,37 +1069,197 @@ document.addEventListener('visibilitychange', () => {
     ctx.textBaseline = 'alphabetic';
   }
 
-  function drawFrame(p) {
-    ctx.clearRect(0, 0, SIZE, SIZE);
+  // ── Easing helpers ──────────────────────────────────────
+  function easeOutBack(t) {
+    const c = 2.5;
+    return 1 + c * Math.pow(t - 1, 3) + (c - 1) * Math.pow(t - 1, 2);
+  }
+  function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  // ── Scan beam that sweeps 360° ───────────────────────────
+  function drawScanBeam(scanProg) {
+    if (scanProg <= 0 || scanProg >= 1) return;
+    const angle = START + scanProg * Math.PI * 2;
+
+    // Swept "sonar" wedge (trailing arc fill)
+    const wedgeSpan = Math.PI * 0.55;
+    const wedgeStart = angle - wedgeSpan;
+
+    // Draw trailing glow arc manually as a filled sector
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, maxR * 1.05, wedgeStart, angle);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(0,229,255,0.04)';
+    ctx.fill();
+    ctx.restore();
+
+    // Leading beam line
+    const ex = cx + Math.cos(angle) * (maxR + 24);
+    const ey = cy + Math.sin(angle) * (maxR + 24);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(ex, ey);
+    ctx.strokeStyle = 'rgba(0,229,255,0.95)';
+    ctx.lineWidth   = 1.5;
+    ctx.shadowBlur  = 28;
+    ctx.shadowColor = '#00e5ff';
+    ctx.stroke();
+    ctx.shadowBlur  = 0;
+
+    // Tip spark
+    ctx.beginPath();
+    ctx.arc(ex, ey, 3, 0, Math.PI * 2);
+    ctx.fillStyle  = '#ffffff';
+    ctx.shadowBlur = 16;
+    ctx.shadowColor = '#00e5ff';
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  // ── Per-vertex progress (activates as scan passes it) ───
+  function vertexT(i, scanProg) {
+    const activateAt = (i / SIDES) * 0.9;   // spread across 90% of scan
+    const dur        = 0.28;
+    return clamp((scanProg - activateAt) / dur, 0, 1);
+  }
+
+  // ── Staggered polygon ────────────────────────────────────
+  function drawPolygonStagger(scanProg) {
+    const ratios = skills.map((sk, i) => sk.value * easeOutBack(vertexT(i, scanProg)));
+
+    ctx.beginPath();
+    for (let i = 0; i < SIDES; i++) {
+      const p = pt(i, ratios[i]);
+      i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
+    grad.addColorStop(0,   'rgba(0,229,255,0.28)');
+    grad.addColorStop(0.5, 'rgba(191,0,255,0.16)');
+    grad.addColorStop(1,   'rgba(255,0,100,0.05)');
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    ctx.shadowBlur  = 18;
+    ctx.shadowColor = '#00e5ff';
+    ctx.strokeStyle = '#00e5ff';
+    ctx.lineWidth   = 1.8;
+    ctx.stroke();
+    ctx.shadowBlur  = 0;
+  }
+
+  // ── Staggered dots with flash ring ──────────────────────
+  function drawDotsStagger(scanProg) {
+    skills.forEach((sk, i) => {
+      const vt = vertexT(i, scanProg);
+      if (vt <= 0) return;
+      const ratio = easeOutBack(vt);
+      const p     = pt(i, sk.value * ratio);
+
+      // Glow halo
+      const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 9);
+      g.addColorStop(0, sk.color + 'bb');
+      g.addColorStop(1, 'transparent');
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 9, 0, Math.PI * 2);
+      ctx.fillStyle = g;
+      ctx.fill();
+
+      // Solid dot
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+      ctx.fillStyle   = sk.color;
+      ctx.shadowBlur  = 14;
+      ctx.shadowColor = sk.color;
+      ctx.fill();
+      ctx.shadowBlur  = 0;
+
+      // Flash ring that expands & fades on activation
+      if (vt < 0.45) {
+        const fAlpha = (1 - vt / 0.45) * 0.9;
+        const fR     = 4 + (1 - vt / 0.45) * 18;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, fR, 0, Math.PI * 2);
+        const hex = Math.round(fAlpha * 255).toString(16).padStart(2, '0');
+        ctx.strokeStyle = sk.color + hex;
+        ctx.lineWidth   = 1.5;
+        ctx.stroke();
+      }
+    });
+  }
+
+  // ── Grid fade-in with glitch flicker ────────────────────
+  function drawGridFade(p) {
+    const flicker = p < 0.12
+      ? (Math.random() > 0.35 ? 1 : 0.15)
+      : 1;
+    ctx.globalAlpha = Math.min(p / 0.08, 1) * flicker;
     drawGrid();
-    drawSkillPolygon(p);
-    drawDots(p);
-    drawLabels(p);
-    drawCenter();
+    ctx.globalAlpha = 1;
+  }
+
+  // ── Labels with per-char glitch entry ───────────────────
+  function drawLabelsGlitch(p) {
+    if (p <= 0) return;
+    const alpha = easeInOutCubic(clamp(p, 0, 1));
+    ctx.globalAlpha = alpha;
+    skills.forEach((sk, i) => {
+      const lp = pt(i, 1.28);
+      ctx.fillStyle    = sk.color;
+      ctx.font         = `bold ${10 * DPR / DPR}px "Share Tech Mono"`;
+      ctx.textAlign    = 'center';
+      ctx.shadowBlur   = 8;
+      ctx.shadowColor  = sk.color;
+      ctx.fillText(sk.label, lp.x, lp.y - 3);
+      ctx.shadowBlur   = 0;
+      ctx.fillStyle    = 'rgba(200,214,246,0.55)';
+      ctx.font         = `${9 * DPR / DPR}px "Share Tech Mono"`;
+      ctx.fillText(sk.pct, lp.x, lp.y + 11);
+    });
+    ctx.globalAlpha = 1;
   }
 
   let progress  = 0;
   let triggered = false;
   let pulseT    = 0;
 
+  // Show grid immediately (empty, no polygon)
+  ctx.clearRect(0, 0, SIZE, SIZE);
+  drawGrid();
+  drawCenter();
+
   function animate() {
-    progress += 0.018;
-    drawFrame(Math.min(progress, 1));
-    if (progress < 1) {
+    progress += 0.011;                       // ~1.5s total at 60fps
+    const p        = Math.min(progress, 1);
+    const scanProg = clamp(p / 0.68, 0, 1); // scan finishes at p=0.68
+    const labelP   = clamp((p - 0.72) / 0.28, 0, 1);
+
+    ctx.clearRect(0, 0, SIZE, SIZE);
+    drawGridFade(p);
+    drawScanBeam(scanProg);
+    drawPolygonStagger(scanProg);
+    drawDotsStagger(scanProg);
+    drawLabelsGlitch(labelP);
+    drawCenter();
+
+    if (p < 1) {
       requestAnimationFrame(animate);
     } else {
-      // Subtle breathing glow after finish
       (function pulse() {
         pulseT += 0.015;
-        // Redraw center with a pulsing glow
         ctx.clearRect(cx - 30, cy - 30, 60, 60);
         ctx.fillStyle = `rgba(0,229,255,${0.04 + Math.sin(pulseT) * 0.03})`;
         ctx.beginPath();
         ctx.arc(cx, cy, 22, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle  = `rgba(0,229,255,${0.4 + Math.sin(pulseT) * 0.15})`;
-        ctx.font       = `bold ${10 * DPR / DPR}px "Orbitron"`;
-        ctx.textAlign  = 'center';
+        ctx.fillStyle    = `rgba(0,229,255,${0.4 + Math.sin(pulseT) * 0.15})`;
+        ctx.font         = `bold ${10 * DPR / DPR}px "Orbitron"`;
+        ctx.textAlign    = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('VICA', cx, cy);
         ctx.textBaseline = 'alphabetic';
@@ -1329,7 +1414,7 @@ document.addEventListener('visibilitychange', () => {
     // Keep viewport coords — scrollY added live in draw() each frame
     mouse.clientX = e.clientX;
     mouse.clientY = e.clientY;
-  });
+  }, { passive: true });
 
   window.addEventListener('mouseleave', () => {
     mouse.clientX = -9999;
@@ -1347,6 +1432,315 @@ document.addEventListener('visibilitychange', () => {
 
   resize();
   draw();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   23. SCROLL PROGRESS BAR
+═══════════════════════════════════════════════════════════ */
+(function initScrollProgress() {
+  const bar = $('#scrollProgressBar');
+  if (!bar) return;
+
+  function update() {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const pct   = total > 0 ? (window.scrollY / total) * 100 : 0;
+    bar.style.width = pct + '%';
+  }
+
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   24. 3D TILT — ABOUT PHOTO
+═══════════════════════════════════════════════════════════ */
+(function initAboutTilt() {
+  const col = $('.about-visual-col');
+  if (!col) return;
+
+  const TILT = 12;
+
+  col.addEventListener('mousemove', e => {
+    const rect = col.getBoundingClientRect();
+    const x    = (e.clientX - rect.left)  / rect.width  - 0.5;
+    const y    = (e.clientY - rect.top)   / rect.height - 0.5;
+
+    col.style.transform = `
+      perspective(900px)
+      rotateX(${-y * TILT}deg)
+      rotateY(${x  * TILT}deg)
+    `;
+  }, { passive: true });
+
+  col.addEventListener('mouseleave', () => {
+    col.style.transition  = 'transform 0.7s ease';
+    col.style.transform   = '';
+    setTimeout(() => { col.style.transition = ''; }, 700);
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   25. NORTHERN LIGHTS + CLICK RIPPLE
+═══════════════════════════════════════════════════════════ */
+(function initNorthernLightsAndRipple() {
+  // ── Northern lights blobs ──────────────────────────────
+  const container = $('#northernLights');
+  if (container) {
+    const BLOBS = [
+      { color: 'rgba(0,229,255,0.07)',  size: 520, bx: 15, by: 25, ox: 14, oy: 10, speed: 0.00028 },
+      { color: 'rgba(191,0,255,0.05)', size: 640, bx: 72, by: 55, ox: 18, oy: 13, speed: 0.00022 },
+      { color: 'rgba(0,255,159,0.045)',size: 460, bx: 48, by: 15, ox: 12, oy: 16, speed: 0.00035 },
+      { color: 'rgba(255,0,100,0.04)', size: 580, bx: 28, by: 72, ox: 16, oy: 11, speed: 0.00019 },
+      { color: 'rgba(0,229,255,0.05)', size: 500, bx: 80, by: 38, ox: 20, oy: 14, speed: 0.00031 },
+    ];
+
+    BLOBS.forEach(b => {
+      const el = document.createElement('div');
+      el.className = 'nl-blob';
+      el.style.cssText = `
+        width:${b.size}px; height:${b.size}px;
+        background:${b.color};
+        left:${b.bx}%; top:${b.by}%;
+      `;
+      container.appendChild(el);
+      b.el = el;
+      b.t  = Math.random() * Math.PI * 2;
+    });
+
+    (function animateBlobs() {
+      BLOBS.forEach(b => {
+        b.t += b.speed;
+        const lx = b.bx + Math.sin(b.t)           * b.ox;
+        const ly = b.by + Math.cos(b.t * 0.73)    * b.oy;
+        b.el.style.left = lx + '%';
+        b.el.style.top  = ly + '%';
+      });
+      requestAnimationFrame(animateBlobs);
+    })();
+  }
+
+  // ── Click ripple ───────────────────────────────────────
+  const RIPPLE_CYAN   = ['#00e5ff', '#00c8e0'];
+  const RIPPLE_PURPLE = ['#bf00ff', '#9900cc'];
+
+  document.addEventListener('click', e => {
+    const x = e.clientX, y = e.clientY;
+    const colors = document.body.classList.contains('hovering') ? RIPPLE_PURPLE : RIPPLE_CYAN;
+
+    colors.forEach((color, i) => {
+      const ripple  = document.createElement('div');
+      ripple.className = 'click-ripple';
+      const size    = 6 + i * 2;
+      const dur     = 0.65 + i * 0.22;
+      const delay   = i * 0.09;
+
+      ripple.style.cssText = `
+        left:${x}px; top:${y}px;
+        width:${size}px; height:${size}px;
+        border-color:${color};
+        box-shadow: 0 0 6px ${color}66;
+        animation: click-ripple-anim ${dur}s ease-out ${delay}s forwards;
+      `;
+      document.body.appendChild(ripple);
+      setTimeout(() => ripple.remove(), (dur + delay) * 1000 + 100);
+    });
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   26. FLOATING PARTICLES — SECTION DIVIDERS
+═══════════════════════════════════════════════════════════ */
+(function initDividerParticles() {
+  const COLORS = ['#00e5ff', '#bf00ff', '#ff0064', '#00ff9f', '#ffcc00'];
+
+  $$('.divider-particles').forEach(canvas => {
+    const ctx = canvas.getContext('2d');
+    let W, H;
+    const pts = [];
+
+    function resize() {
+      W = canvas.width  = canvas.offsetWidth  || window.innerWidth;
+      H = canvas.height = canvas.offsetHeight || 180;
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    for (let i = 0; i < 28; i++) {
+      pts.push({
+        x:  Math.random() * (W || 1200),
+        y:  Math.random() * (H || 180),
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.25,
+        r:  rand(0.4, 1.6),
+        a:  rand(0.25, 0.65),
+        c:  COLORS[randInt(0, COLORS.length)],
+        ph: rand(0, Math.PI * 2),
+      });
+    }
+
+    let alive = false;
+    const obs = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && !alive) {
+        alive = true;
+        tick();
+      }
+    }, { rootMargin: '200px' });
+    obs.observe(canvas);
+
+    function tick() {
+      if (!alive) return;
+      ctx.clearRect(0, 0, W, H);
+      const t = Date.now() * 0.001;
+
+      pts.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+        if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+
+        const alpha = p.a * (0.5 + 0.5 * Math.sin(t * 1.4 + p.ph));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle   = p.c;
+        ctx.globalAlpha = alpha;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      });
+      requestAnimationFrame(tick);
+    }
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   27. MORPHING TEXT
+═══════════════════════════════════════════════════════════ */
+(function initMorphingText() {
+  const el = $('#morphingWord');
+  if (!el) return;
+
+  const words = ['DEVELOPER', 'DESIGNER', 'CREATOR', 'INNOVATOR', 'BUILDER'];
+  let wordIdx  = 0;
+  let busy     = false;
+
+  function render(word) {
+    el.innerHTML = word.split('').map(ch =>
+      `<span class="morph-char">${ch === ' ' ? '&nbsp;' : ch}</span>`
+    ).join('');
+  }
+
+  function morphTo(nextWord) {
+    if (busy) return;
+    busy = true;
+
+    const chars = $$('.morph-char', el);
+    // Exit current
+    chars.forEach((ch, i) => {
+      setTimeout(() => ch.classList.add('exit'), i * 32);
+    });
+
+    const exitTime = chars.length * 32 + 140;
+
+    setTimeout(() => {
+      render(nextWord);
+      const newChars = $$('.morph-char', el);
+      newChars.forEach(ch => ch.classList.add('enter'));
+
+      // Force reflow then remove enter class staggered
+      void el.offsetWidth;
+      newChars.forEach((ch, i) => {
+        setTimeout(() => ch.classList.remove('enter'), i * 38);
+      });
+
+      setTimeout(() => { busy = false; }, newChars.length * 38 + 200);
+    }, exitTime);
+  }
+
+  render(words[0]);
+
+  setInterval(() => {
+    wordIdx = (wordIdx + 1) % words.length;
+    morphTo(words[wordIdx]);
+  }, 2600);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   28. CURSOR TEXT SWAP
+═══════════════════════════════════════════════════════════ */
+(function initCursorText() {
+  const label = $('#cursorLabel');
+  if (!label) return;
+
+  const rules = [
+    { sel: 'input, textarea', text: 'TYPE' },
+  ];
+
+  document.addEventListener('mouseover', e => {
+    for (const rule of rules) {
+      if (e.target.closest(rule.sel)) {
+        label.textContent = rule.text;
+        document.body.classList.add('cursor-has-label');
+        return;
+      }
+    }
+    document.body.classList.remove('cursor-has-label');
+    label.textContent = '';
+  });
+
+  document.addEventListener('mouseleave', () => {
+    document.body.classList.remove('cursor-has-label');
+    label.textContent = '';
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   29. SCROLL-TRIGGERED COUNTERS — SKILL CARDS
+═══════════════════════════════════════════════════════════ */
+(function initSkillCounters() {
+  const pcts = $$('.scc-pct[data-count]');
+  if (!pcts.length) return;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el     = entry.target;
+      const target = parseInt(el.getAttribute('data-count'));
+      let   cur    = 0;
+      const step   = target / 45;
+
+      const id = setInterval(() => {
+        cur += step;
+        if (cur >= target) { cur = target; clearInterval(id); }
+        el.textContent = Math.floor(cur) + '%';
+      }, 28);
+
+      obs.unobserve(el);
+    });
+  }, { threshold: 0.6 });
+
+  pcts.forEach(el => obs.observe(el));
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   30. STAGGER REVEAL
+═══════════════════════════════════════════════════════════ */
+(function initStaggerReveal() {
+  const containers = $$('[data-stagger]');
+  if (!containers.length) return;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+
+      const items = $$('.stagger-item', entry.target);
+      items.forEach((item, i) => {
+        setTimeout(() => item.classList.add('stagger-in'), i * 110 + 80);
+      });
+
+      obs.unobserve(entry.target);
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -30px 0px' });
+
+  containers.forEach(el => obs.observe(el));
 })();
 
 console.log('%c[VICA PORTFOLIO] %cSYSTEM ONLINE', 'color:#00e5ff;font-family:monospace;font-weight:bold', 'color:#00ff9f;font-family:monospace');
