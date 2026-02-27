@@ -1201,7 +1201,6 @@ body.cursor-on-input .cursor-dot { opacity: 0 !important; }
 }
 
 .skill-list { display: flex; flex-direction: column; gap: 1.2rem; }
-.sb-item {}
 .sb-header {
   display: flex; justify-content: space-between;
   font-family: var(--ff-mono);
