@@ -812,18 +812,43 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
    18. DYNAMIC BACKGROUND — Subtle hex pattern shift on scroll
 ═══════════════════════════════════════════════════════════ */
 (function initBgDynamic() {
-  let lastScroll = 0;
   const heroGrid = $('.hero-grid');
   if (!heroGrid) return;
 
-  window.addEventListener('scroll', () => {
-    const s = window.scrollY;
-    const d = s - lastScroll;
-    lastScroll = s;
+  const BASE_TILT = 25;
 
-    const speed = clamp(Math.abs(d) * 0.1, 0, 1);
-    heroGrid.style.opacity = clamp(1 - s / window.innerHeight, 0, 1);
+  window.addEventListener('scroll', () => {
+    const s     = window.scrollY;
+    const vh    = window.innerHeight;
+    const tilt  = BASE_TILT + s * 0.012;          // grid tilts more as you scroll
+    const rot   = s * 0.018;                       // slow Z rotation
+    const opacity = clamp(1 - s / vh, 0, 1);
+
+    heroGrid.style.transform = `perspective(600px) rotateX(${tilt}deg) rotateZ(${rot}deg) scaleY(2)`;
+    heroGrid.style.opacity   = opacity;
   }, { passive: true });
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   31. SECTION NEON FADE — dims sections scrolled past
+═══════════════════════════════════════════════════════════ */
+(function initSectionFade() {
+  const sections = $$('section.section');
+
+  function update() {
+    sections.forEach(sec => {
+      const rect = sec.getBoundingClientRect();
+      // Section fully above viewport → dim it
+      if (rect.bottom < -80) {
+        sec.classList.add('section--past');
+      } else {
+        sec.classList.remove('section--past');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', update, { passive: true });
+  update();
 })();
 
 /* ═══════════════════════════════════════════════════════════
@@ -1741,6 +1766,190 @@ document.addEventListener('visibilitychange', () => {
   }, { threshold: 0.15, rootMargin: '0px 0px -30px 0px' });
 
   containers.forEach(el => obs.observe(el));
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   32. GLOBAL BACKGROUND PARTICLES — absolute canvas, full doc height
+   Canvas scrolls with the page → browser handles sync, zero JS lag.
+═══════════════════════════════════════════════════════════ */
+(function initGlobalParticles() {
+  const canvas = $('#bgParticleCanvas');
+  if (!canvas) return;
+  const ctx    = canvas.getContext('2d');
+  const COLORS = ['#00e5ff', '#bf00ff', '#00ff9f', '#ff0064', '#ffcc00'];
+
+  let W, VH, docH;
+  let mouseX = -9999, mouseY = -9999;
+
+  function getDocH() {
+    return Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, window.innerHeight);
+  }
+
+  function resize() {
+    W    = window.innerWidth;
+    VH   = window.innerHeight;
+    docH = getDocH();
+    canvas.width        = W;
+    canvas.height       = docH;
+    canvas.style.width  = W + 'px';
+    canvas.style.height = docH + 'px';
+  }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+  window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; }, { passive: true });
+
+  function mk() {
+    const angle = rand(0, Math.PI * 2);
+    const speed = rand(0.1, 0.35);
+    return {
+      x:       rand(0, W),
+      y:       rand(0, docH),   // page coordinates — full document
+      vx:      Math.cos(angle) * speed,
+      vy:      Math.sin(angle) * speed,
+      r:       rand(1.2, 2.8),
+      baseA:   rand(0.4, 0.7),
+      alpha:   rand(0, 0.5),
+      color:   COLORS[randInt(0, COLORS.length)],
+      life:    randInt(0, 500),
+      maxLife: rand(400, 900),
+    };
+  }
+
+  function buildParticles() {
+    const count = clamp(Math.round((docH / VH) * 55), 200, 600);
+    return Array.from({ length: count }, mk);
+  }
+
+  let particles = buildParticles();
+  window.addEventListener('load', () => { resize(); particles = buildParticles(); }, { passive: true });
+
+  function loop() {
+    const scrollY    = window.scrollY;
+    const pageMouseY = mouseY + scrollY;  // viewport mouse → page coords
+
+    // Clear only the visible band — not the whole 8000px canvas
+    ctx.clearRect(0, scrollY - 4, W, VH + 8);
+
+    const visible = [];
+
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.life++;
+      if (p.life > p.maxLife) {
+        const n = mk(); n.life = 0; n.alpha = 0;
+        particles[i] = n;
+        continue;
+      }
+
+      p.vx = p.vx * 0.998 + rand(-0.004, 0.004);
+      p.vy = p.vy * 0.998 + rand(-0.004, 0.004);
+      p.x += p.vx;
+      p.y += p.vy;
+
+      if (p.x < -4)    p.x = W + 4;
+      if (p.x > W + 4) p.x = -4;
+      if (p.y < 0)     p.y = docH;
+      if (p.y > docH)  p.y = 0;
+
+      // skip if outside visible band
+      if (p.y < scrollY - 10 || p.y > scrollY + VH + 10) continue;
+
+      // mouse repulsion — both in page coords
+      const dx = mouseX - p.x, dy = pageMouseY - p.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 90 && dist > 0) {
+        p.vx -= (dx / dist) * 0.015;
+        p.vy -= (dy / dist) * 0.015;
+      }
+
+      const t = p.life / p.maxLife;
+      p.alpha = p.baseA * Math.sin(t * Math.PI);
+
+      // draw at page coordinates — canvas is absolute so browser handles scroll
+      const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
+      g.addColorStop(0, p.color + '99');
+      g.addColorStop(1, 'transparent');
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
+      ctx.fillStyle   = g;
+      ctx.globalAlpha = p.alpha * 0.5;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle   = p.color;
+      ctx.globalAlpha = p.alpha;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      visible.push(p);
+    }
+
+    // connection lines — only visible particles
+    for (let i = 0; i < visible.length; i++) {
+      for (let j = i + 1; j < visible.length; j++) {
+        const a = visible[i], b = visible[j];
+        const d = Math.hypot(a.x - b.x, a.y - b.y);
+        if (d < 85) {
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = a.color;
+          ctx.globalAlpha = (1 - d / 85) * 0.12;
+          ctx.lineWidth   = 0.4;
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+      }
+    }
+
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   33. LOADER PARTICLES
+═══════════════════════════════════════════════════════════ */
+(function initLoaderParticles() {
+  const canvas = $('#loaderParticles');
+  if (!canvas) return;
+  const ctx    = canvas.getContext('2d');
+  const COLORS = ['#00e5ff', '#bf00ff', '#00ff9f', '#ff0064', '#ffcc00'];
+  let W, H;
+
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  const particles = Array.from({ length: 100 }, () => ({
+    x: rand(0, window.innerWidth), y: rand(0, window.innerHeight),
+    vx: rand(-0.2, 0.2), vy: rand(-0.4, -0.08),
+    r: rand(0.8, 2.0), baseA: rand(0.3, 0.55),
+    alpha: 0, color: COLORS[randInt(0, COLORS.length)],
+    life: randInt(0, 400), maxLife: rand(300, 600),
+  }));
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    for (const p of particles) {
+      p.life++;
+      if (p.life > p.maxLife) { p.life = 0; p.x = rand(0, W); p.y = H + 5; }
+      p.vx *= 0.995; p.vy *= 0.995;
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      const t = p.life / p.maxLife;
+      p.alpha = p.baseA * Math.sin(t * Math.PI);
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.alpha;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
 })();
 
 console.log('%c[VICA PORTFOLIO] %cSYSTEM ONLINE', 'color:#00e5ff;font-family:monospace;font-weight:bold', 'color:#00ff9f;font-family:monospace');

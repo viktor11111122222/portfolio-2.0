@@ -19,6 +19,7 @@
 
   <!-- Loading Screen -->
   <div id="loader">
+    <canvas id="loaderParticles"></canvas>
     <canvas id="loaderHexCanvas"></canvas>
     <div class="loader-bg-grid"></div>
     <div class="loader-content">
@@ -42,6 +43,9 @@
   <!-- Custom Cursor -->
   <div class="cursor-dot" id="cursorDot"></div>
   <div class="cursor-ring" id="cursorRing"><span class="cursor-label" id="cursorLabel"></span></div>
+
+  <!-- Global background particles -->
+  <canvas id="bgParticleCanvas"></canvas>
 
   <!-- Navigation -->
   <nav id="navbar">
@@ -331,6 +335,104 @@
   </section>
 
   <!-- Floating particle divider -->
+  <div class="section-divider"><canvas class="divider-particles"></canvas></div>
+
+  <!-- ╔══════════════════════════════╗ -->
+  <!-- ║       TIMELINE SECTION       ║ -->
+  <!-- ╚══════════════════════════════╝ -->
+  <section id="timeline" class="section section-tl">
+    <div class="section-bg-text" data-text="LOG">LOG</div>
+    <div class="container">
+      <div class="section-header" data-aos="fade-down">
+        <span class="section-tag">◈ 01.5 // SYSTEM LOG</span>
+        <h2 class="section-title">EVOLUTION</h2>
+        <div class="title-line"></div>
+      </div>
+
+      <div class="tl-grid">
+
+        <!-- LEFT: Timeline -->
+        <div class="tl-track">
+          <div class="tl-line"></div>
+
+          <div class="tl-item" data-aos="fade-right">
+            <div class="tl-year">2020</div>
+            <div class="tl-node"></div>
+            <div class="tl-body">
+              <div class="tl-evt">SYSTEM BOOT</div>
+              <p class="tl-sub">Opened a text editor for the first time. Wrote "Hello World". Never looked back.</p>
+            </div>
+          </div>
+
+          <div class="tl-item" data-aos="fade-right">
+            <div class="tl-year">2022</div>
+            <div class="tl-node"></div>
+            <div class="tl-body">
+              <div class="tl-evt">FIRST CLIENT</div>
+              <p class="tl-sub">Turned passion into real impact — delivering production-ready apps for clients.</p>
+            </div>
+          </div>
+
+          <div class="tl-item" data-aos="fade-right">
+            <div class="tl-year">2024</div>
+            <div class="tl-node"></div>
+            <div class="tl-body">
+              <div class="tl-evt">50+ PROJECTS</div>
+              <p class="tl-sub">Shipped across web and mobile. React, React Native, full-stack — nothing off-limits.</p>
+            </div>
+          </div>
+
+          <div class="tl-item tl-item--active" data-aos="fade-right">
+            <div class="tl-year">2025</div>
+            <div class="tl-node tl-node--active"></div>
+            <div class="tl-body">
+              <div class="tl-evt">LEVEL UP <span class="tl-cursor">█</span></div>
+              <p class="tl-sub">Pushing deeper into AI-integrated products and next-gen interfaces.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: System Diagnostics Panel -->
+        <div class="tl-panel" data-aos="fade-left">
+          <div class="tl-panel-header">
+            <span class="tl-panel-tag">// SYSTEM_DIAGNOSTICS.exe</span>
+          </div>
+
+          <div class="tl-stats">
+            <div class="tl-stat">
+              <span class="tl-stat-val">50<span class="tl-stat-plus">+</span></span>
+              <span class="tl-stat-key">PROJECTS_DELIVERED</span>
+            </div>
+            <div class="tl-stat">
+              <span class="tl-stat-val">5</span>
+              <span class="tl-stat-key">YEARS_IN_THE_FIELD</span>
+            </div>
+            <div class="tl-stat">
+              <span class="tl-stat-val">2</span>
+              <span class="tl-stat-key">PLATFORMS_MASTERED</span>
+            </div>
+            <div class="tl-stat">
+              <span class="tl-stat-val">∞</span>
+              <span class="tl-stat-key">PASSION_LEVEL</span>
+            </div>
+          </div>
+
+          <div class="tl-panel-divider"></div>
+
+          <p class="tl-quote">
+            I don't just write code &mdash;<br>I engineer experiences that people feel.
+          </p>
+
+          <div class="tl-panel-footer">
+            <span class="tl-status-dot"></span>
+            <span class="tl-status-txt">AVAILABLE FOR NEW PROJECTS</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <div class="section-divider"><canvas class="divider-particles"></canvas></div>
 
   <!-- ╔══════════════════════════════╗ -->
@@ -655,6 +757,54 @@
 
   <!-- Footer -->
   <footer id="footer">
+    <div class="footer-line"></div>
+
+    <!-- Main grid -->
+    <div class="footer-grid">
+
+      <!-- Col 1: Brand -->
+      <div class="footer-col">
+        <div class="footer-brand">[VICA]</div>
+        <p class="footer-tagline">Engineering experiences<br>that people feel.</p>
+        <div class="footer-avail">
+          <span class="footer-avail-dot"></span>
+          AVAILABLE FOR NEW PROJECTS
+        </div>
+      </div>
+
+      <!-- Col 2: Navigate -->
+      <div class="footer-col">
+        <div class="footer-col-head">// NAVIGATE</div>
+        <nav class="footer-nav">
+          <a href="#hero">HOME</a>
+          <a href="#about">ABOUT</a>
+          <a href="#skills">SKILLS</a>
+          <a href="#projects">PROJECTS</a>
+          <a href="#contact">CONTACT</a>
+        </nav>
+      </div>
+
+      <!-- Col 3: Connect -->
+      <div class="footer-col">
+        <div class="footer-col-head">// CONNECT</div>
+        <div class="footer-links">
+          <a href="#" class="footer-link">[ GITHUB ]</a>
+          <a href="#" class="footer-link">[ LINKEDIN ]</a>
+          <a href="#" class="footer-link">[ DRIBBBLE ]</a>
+          <a href="#contact" class="footer-link">[ EMAIL ]</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- System info bar -->
+    <div class="footer-sysbar">
+      <span>SYS&nbsp;:&nbsp;OPERATIONAL</span>
+      <span>BUILD&nbsp;:&nbsp;v2.0.1</span>
+      <span>STACK&nbsp;:&nbsp;HTML · CSS · JS</span>
+      <span>NODE&nbsp;:&nbsp;<span class="footer-node-dot"></span>&nbsp;ONLINE</span>
+    </div>
+
     <div class="footer-line"></div>
     <div class="footer-content">
       <span class="footer-logo">[VICA]</span>
