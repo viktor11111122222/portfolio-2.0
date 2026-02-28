@@ -709,32 +709,78 @@ function animateHeroStats() {
 })();
 
 /* ═══════════════════════════════════════════════════════════
-   13. CONTACT FORM
+   13. CONTACT FORM — EmailJS
+   ─────────────────────────────────────────────────────────
+   Popuni ova tri stringa sa EmailJS dashboard-a:
+   emailjs.com → Account → API Keys → Public Key
+   emailjs.com → Email Services → Service ID
+   emailjs.com → Email Templates → Template ID
 ═══════════════════════════════════════════════════════════ */
 (function initForm() {
+  const EMAILJS_PUBLIC_KEY  = '4FrHcttWWMAg0A32b';   // ← ovdje
+  const EMAILJS_SERVICE_ID  = 'service_sq22ile';   // ← ovdje
+  const EMAILJS_TEMPLATE_ID = 'template_301bchb';  // ← ovdje
+
   const form = $('#contactForm');
   if (!form) return;
+
+  // Inicijaliziraj EmailJS sa public key-em
+  if (typeof emailjs !== 'undefined') {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+  }
 
   form.addEventListener('submit', e => {
     e.preventDefault();
     const btn  = form.querySelector('button[type=submit]');
     const text = btn.querySelector('.btn-text');
-    text.textContent = 'TRANSMITTING...';
-    btn.disabled = true;
 
-    setTimeout(() => {
-      text.textContent = '✓ MESSAGE SENT';
-      btn.style.borderColor = '#00ff9f';
-      btn.style.color       = '#00ff9f';
-
+    // Provjeri da li je EmailJS učitan
+    if (typeof emailjs === 'undefined') {
+      text.textContent = '✗ SDK NOT LOADED';
+      btn.style.borderColor = 'var(--pink)';
+      btn.style.color       = 'var(--pink)';
       setTimeout(() => {
-        text.textContent = 'TRANSMIT MESSAGE';
-        btn.disabled      = false;
+        text.textContent      = 'TRANSMIT MESSAGE';
         btn.style.borderColor = '';
         btn.style.color       = '';
-        form.reset();
       }, 3000);
-    }, 1500);
+      return;
+    }
+
+    // Popuni {{time}} sa trenutnim datumom i vremenom
+    $('#ftime').value = new Date().toLocaleString('sr-RS', {
+      dateStyle: 'medium', timeStyle: 'short'
+    });
+
+    text.textContent = 'TRANSMITTING...';
+    btn.disabled     = true;
+
+    emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, form)
+      .then(() => {
+        // Uspješno slanje
+        text.textContent      = '✓ MESSAGE SENT';
+        btn.style.borderColor = '#00ff9f';
+        btn.style.color       = '#00ff9f';
+        form.reset();
+        setTimeout(() => {
+          text.textContent      = 'TRANSMIT MESSAGE';
+          btn.disabled          = false;
+          btn.style.borderColor = '';
+          btn.style.color       = '';
+        }, 3000);
+      })
+      .catch(() => {
+        // Greška pri slanju
+        text.textContent      = '✗ TRANSMISSION FAILED';
+        btn.style.borderColor = 'var(--pink)';
+        btn.style.color       = 'var(--pink)';
+        btn.disabled          = false;
+        setTimeout(() => {
+          text.textContent      = 'TRANSMIT MESSAGE';
+          btn.style.borderColor = '';
+          btn.style.color       = '';
+        }, 3000);
+      });
   });
 })();
 

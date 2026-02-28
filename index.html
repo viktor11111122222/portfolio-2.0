@@ -723,25 +723,26 @@
         </div>
 
         <form class="contact-form" id="contactForm" data-aos="fade-left">
+          <input type="hidden" name="time" id="ftime">
           <div class="form-row">
             <div class="form-field">
-              <input type="text" id="fname" placeholder=" " required autocomplete="off">
+              <input type="text" id="fname" name="name" placeholder=" " required autocomplete="off">
               <label for="fname">YOUR NAME</label>
               <div class="fline"></div>
             </div>
             <div class="form-field">
-              <input type="email" id="femail" placeholder=" " required autocomplete="off">
+              <input type="email" id="femail" name="email" placeholder=" " required autocomplete="off">
               <label for="femail">EMAIL ADDRESS</label>
               <div class="fline"></div>
             </div>
           </div>
           <div class="form-field">
-            <input type="text" id="fsubject" placeholder=" " required autocomplete="off">
-            <label for="fsubject">SUBJECT</label>
+            <input type="tel" id="fphone" name="phone" placeholder=" " autocomplete="off">
+            <label for="fphone">PHONE NUMBER</label>
             <div class="fline"></div>
           </div>
           <div class="form-field">
-            <textarea id="fmessage" rows="5" placeholder=" " required></textarea>
+            <textarea id="fmessage" name="message" rows="5" placeholder=" " required></textarea>
             <label for="fmessage">MESSAGE</label>
             <div class="fline"></div>
           </div>
@@ -813,6 +814,8 @@
     </div>
   </footer>
 
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
