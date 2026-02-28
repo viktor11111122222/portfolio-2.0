@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5ff"/>
+      <stop offset="50%" stop-color="#bf00ff"/>
+      <stop offset="100%" stop-color="#ff0064"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Dark background -->
+  <rect width="64" height="64" rx="10" fill="#030308"/>
+
+  <!-- Corner accent lines -->
+  <line x1="2" y1="2" x2="14" y2="2" stroke="#00e5ff" stroke-width="1.5" opacity="0.7"/>
+  <line x1="2" y1="2" x2="2" y2="14" stroke="#00e5ff" stroke-width="1.5" opacity="0.7"/>
+  <line x1="62" y1="2" x2="50" y2="2" stroke="#ff0064" stroke-width="1.5" opacity="0.7"/>
+  <line x1="62" y1="2" x2="62" y2="14" stroke="#ff0064" stroke-width="1.5" opacity="0.7"/>
+  <line x1="2" y1="62" x2="14" y2="62" stroke="#00e5ff" stroke-width="1.5" opacity="0.7"/>
+  <line x1="2" y1="62" x2="2" y2="50" stroke="#00e5ff" stroke-width="1.5" opacity="0.7"/>
+  <line x1="62" y1="62" x2="50" y2="62" stroke="#ff0064" stroke-width="1.5" opacity="0.7"/>
+  <line x1="62" y1="62" x2="62" y2="50" stroke="#ff0064" stroke-width="1.5" opacity="0.7"/>
+
+  <!-- V letter - glow shadow layer -->
+  <text x="32" y="46" font-family="Arial Black, sans-serif" font-size="40" font-weight="900"
+        text-anchor="middle" fill="#bf00ff" opacity="0.4" filter="url(#glow)">V</text>
+
+  <!-- V letter - gradient fill -->
+  <text x="32" y="46" font-family="Arial Black, sans-serif" font-size="40" font-weight="900"
+        text-anchor="middle" fill="url(#g1)" filter="url(#glow)">V</text>
+
+  <!-- Scan line overlay -->
+  <rect x="0" y="30" width="64" height="1" fill="#00e5ff" opacity="0.08"/>
+  <rect x="0" y="40" width="64" height="1" fill="#00e5ff" opacity="0.05"/>
+</svg>
