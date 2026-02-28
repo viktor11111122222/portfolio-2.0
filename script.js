@@ -70,38 +70,52 @@ const randInt = (min, max) => Math.floor(rand(min, max));
     terminal.appendChild(line);
     terminal.scrollTop = terminal.scrollHeight;
 
-    // Typewriter reveal with random "glitch" characters
+    // Typewriter — rAF based, 4 chars per frame (~240 chars/s at 60fps)
     const full = text + (isLast ? '' : '...');
     const glitchChars = '▓▒░█▄▌▐▀#@&%!?';
     let i = 0;
+    let glitching = false;
 
-    function typeNext() {
+    function tick() {
+      if (glitching) {
+        // show glitch char for one frame then move on
+        glitching = false;
+        txt.textContent = full.slice(0, i);
+        requestAnimationFrame(tick);
+        return;
+      }
+
+      // advance 2 chars per frame (~120 chars/s at 60fps)
+      const end = Math.min(i + 2, full.length);
+      // occasional glitch on first char of batch
+      if (Math.random() > 0.85 && i < full.length - 1) {
+        txt.textContent = full.slice(0, i) + glitchChars[randInt(0, glitchChars.length)];
+        glitching = true;
+        requestAnimationFrame(tick);
+        return;
+      }
+      i = end;
+      txt.textContent = full.slice(0, i);
+
       if (i < full.length) {
-        // Occasionally show a glitch char before the real one
-        if (Math.random() > 0.88 && i < full.length - 1) {
-          txt.textContent = full.slice(0, i) + glitchChars[randInt(0, glitchChars.length)];
-          setTimeout(typeNext, 6);
-        } else {
-          txt.textContent = full.slice(0, ++i);
-          setTimeout(typeNext, rand(2, 5));
-        }
+        requestAnimationFrame(tick);
       } else {
-        // Reveal [OK] / [READY]
-        setTimeout(() => {
-          ok.style.opacity = '1';
-          if (isLast) {
-            setTimeout(() => {
-              loader.classList.add('hidden');
-              document.body.style.overflow = '';
-              animateHeroStats();
-            }, 200);
-          } else {
-            scheduleNext();
-          }
-        }, 15);
+        ok.style.opacity = '1';
+        if (isLast) {
+          setTimeout(hideLoader, 350);
+        } else {
+          scheduleNext();
+        }
       }
     }
-    typeNext();
+    requestAnimationFrame(tick);
+  }
+
+  function hideLoader() {
+    if (loader.classList.contains('hidden')) return;
+    loader.classList.add('hidden');
+    document.body.style.overflow = '';
+    animateHeroStats();
   }
 
   function scheduleNext() {
@@ -110,14 +124,17 @@ const randInt = (min, max) => Math.floor(rand(min, max));
       if (msgIdx >= messages.length) return;
       targetProgress = ((msgIdx + 1) / messages.length) * 100;
       addTerminalLine(messages[msgIdx], msgIdx === messages.length - 1);
-    }, rand(15, 35));
+    }, 30);
   }
+
+  // Safety cap — max 3500ms in case of very slow device
+  setTimeout(hideLoader, 3500);
 
   // Kick off first message
   setTimeout(() => {
     targetProgress = (1 / messages.length) * 100;
     addTerminalLine(messages[0], false);
-  }, 80);
+  }, 50);
 
   // ── Hex background for loader ──────────────────────────────
   (function loaderHex() {
@@ -243,13 +260,17 @@ const randInt = (min, max) => Math.floor(rand(min, max));
    3. NAVIGATION
 ═══════════════════════════════════════════════════════════ */
 (function initNav() {
-  const navbar  = $('#navbar');
   const toggle  = $('#navToggle');
   const links   = $('#navLinks');
   const navLinkEls = $$('.nav-link');
 
+  const navBg = $('#navBg');
+
   window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 50);
+    // Fill div grows left→right over first 220px of scroll
+    const t = Math.min(window.scrollY / 220, 1);
+    navBg.style.width = (t * 100).toFixed(2) + '%';
+    navBg.classList.toggle('filled', t >= 1);
 
     // Active link highlighting
     const sections = $$('section[id]');
@@ -1390,11 +1411,11 @@ document.addEventListener('visibilitychange', () => {
   const ctx = canvas.getContext('2d');
 
   const R      = 38;       // hex radius (center to vertex)
-  const BASE_A = 0.035;    // barely-visible base stroke alpha
+  const BASE_A = 0.06;     // base stroke alpha
   const HOVER_R = R * 5.5; // mouse influence radius
   const LERP_F  = 0.07;    // smoothing factor
 
-  let W, H, hexes, mouse = { clientX: -9999, clientY: -9999 };
+  let W, H, hexes, mouse = { clientX: -9999, clientY: -9999 }, heroBottom = 0;
 
   // Pointy-top hex: angle offsets start at -π/6
   function hexPath(cx, cy) {
@@ -1434,6 +1455,8 @@ document.addEventListener('visibilitychange', () => {
     canvas.width  = W;
     canvas.height = H;
     buildGrid();
+    const hero = document.getElementById('hero');
+    heroBottom = hero ? hero.offsetTop + hero.offsetHeight : 0;
   }
 
   function draw() {
@@ -1462,17 +1485,26 @@ document.addEventListener('visibilitychange', () => {
       h.brightness = lerp(h.brightness, raw, LERP_F);
       const b = h.brightness;
 
+      // Fade hexagons inside hero's bottom ::after zone (220px) so hover
+      // brightness matches the CSS gradient and there's no hard seam
+      const HERO_FADE = 220;
+      const vm = (heroBottom > 0 && h.cy >= heroBottom - HERO_FADE && h.cy <= heroBottom)
+        ? 1 - (h.cy - (heroBottom - HERO_FADE)) / HERO_FADE
+        : 1;
+      const bv        = b * vm;
+      const baseAlpha = BASE_A * vm;
+
       hexPath(h.cx, h.cy);
 
-      if (b > 0.01) {
+      if (bv > 0.01) {
         ctx.shadowColor = 'rgba(0,229,255,1)';
-        ctx.shadowBlur  = 14 * b;
-        ctx.fillStyle   = `rgba(0,229,255,${b * 0.07})`;
+        ctx.shadowBlur  = 14 * bv;
+        ctx.fillStyle   = `rgba(0,229,255,${bv * 0.07})`;
         ctx.fill();
       }
 
-      ctx.strokeStyle = `rgba(0,229,255,${BASE_A + b * 0.38})`;
-      ctx.lineWidth   = 0.8 + b * 0.6;
+      ctx.strokeStyle = `rgba(0,229,255,${baseAlpha + bv * 0.38})`;
+      ctx.lineWidth   = 0.8 + bv * 0.6;
       ctx.stroke();
 
       ctx.shadowBlur = 0;
@@ -1996,6 +2028,27 @@ document.addEventListener('visibilitychange', () => {
     requestAnimationFrame(loop);
   }
   loop();
+})();
+
+/* ── DISCORD CARD TOAST ── */
+(function initDiscordToast() {
+  const card  = $('#discordCard');
+  const toast = $('#toastNotif');
+  if (!card || !toast) return;
+
+  let timer;
+
+  function showToast() {
+    toast.innerHTML = `
+      <span class="toast-notif-title">// DISCORD</span>
+      We don't have a Discord server yet —<br>but one is coming soon. Stay tuned!
+    `;
+    toast.classList.add('toast-notif--visible');
+    clearTimeout(timer);
+    timer = setTimeout(() => toast.classList.remove('toast-notif--visible'), 4000);
+  }
+
+  card.addEventListener('click', showToast);
 })();
 
 console.log('%c[VICA PORTFOLIO] %cSYSTEM ONLINE', 'color:#00e5ff;font-family:monospace;font-weight:bold', 'color:#00ff9f;font-family:monospace');

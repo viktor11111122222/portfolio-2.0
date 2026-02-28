@@ -49,6 +49,7 @@
 
   <!-- Navigation -->
   <nav id="navbar">
+    <div id="navBg"></div>
     <div class="nav-logo">
       <span class="logo-bracket">[</span>
       <span class="logo-text">VICA</span>
@@ -692,27 +693,27 @@
             Let's connect and create the future together.
           </p>
           <div class="contact-items" data-stagger>
-            <div class="ci-item stagger-item">
+            <a href="mailto:viktordjordjevic350@gmail.com" class="ci-item stagger-item ci-item--link">
               <div class="ci-icon">✉</div>
               <div class="ci-text">
                 <span class="ci-label">EMAIL</span>
-                <span class="ci-value">vica@example.com</span>
+                <span class="ci-value">viktordjordjevic350@gmail.com</span>
               </div>
-            </div>
-            <div class="ci-item stagger-item">
+            </a>
+            <div class="ci-item stagger-item ci-item--link" id="discordCard">
               <div class="ci-icon">◈</div>
               <div class="ci-text">
                 <span class="ci-label">DISCORD</span>
                 <span class="ci-value">vica#0001</span>
               </div>
             </div>
-            <div class="ci-item stagger-item">
+            <a href="https://www.google.com/maps/place/Serbia" target="_blank" rel="noopener" class="ci-item stagger-item ci-item--link">
               <div class="ci-icon">⚡</div>
               <div class="ci-text">
                 <span class="ci-label">LOCATION</span>
                 <span class="ci-value">Serbia, EU</span>
               </div>
-            </div>
+            </a>
           </div>
           <div class="social-row">
             <a href="#" class="soc-btn">GH</a>
@@ -813,6 +814,9 @@
       <span class="footer-credit">BUILT WITH &lt;3 &amp; CODE</span>
     </div>
   </footer>
+
+  <!-- Toast notification -->
+  <div id="toastNotif" class="toast-notif" aria-live="polite"></div>
 
   <!-- EmailJS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
