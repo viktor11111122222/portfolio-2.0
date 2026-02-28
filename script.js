@@ -36,16 +36,28 @@ const randInt = (min, max) => Math.floor(rand(min, max));
   let currentProgress = 0;
   let targetProgress  = 0;
   let msgIdx          = 0;
+  let barDone  = false;
+  let msgsDone = false;
   document.body.style.overflow = 'hidden';
+
+  // Hide only when BOTH the bar has reached 100% AND the last message is done
+  function tryHide() {
+    if (barDone && msgsDone) hideLoader();
+  }
 
   // Smooth progress bar tick
   (function tickProgress() {
     if (currentProgress < targetProgress) {
-      currentProgress = Math.min(currentProgress + 1.4, targetProgress);
+      currentProgress = Math.min(currentProgress + 2.5, targetProgress);
       fill.style.width = currentProgress + '%';
       pct.textContent  = Math.floor(currentProgress) + '%';
     }
-    if (currentProgress < 100) requestAnimationFrame(tickProgress);
+    if (currentProgress < 100) {
+      requestAnimationFrame(tickProgress);
+    } else {
+      barDone = true;
+      tryHide();
+    }
   })();
 
   function addTerminalLine(text, isLast) {
@@ -85,10 +97,10 @@ const randInt = (min, max) => Math.floor(rand(min, max));
         return;
       }
 
-      // advance 2 chars per frame (~120 chars/s at 60fps)
-      const end = Math.min(i + 2, full.length);
+      // advance 4 chars per frame (~240 chars/s at 60fps)
+      const end = Math.min(i + 4, full.length);
       // occasional glitch on first char of batch
-      if (Math.random() > 0.85 && i < full.length - 1) {
+      if (Math.random() > 0.92 && i < full.length - 1) {
         txt.textContent = full.slice(0, i) + glitchChars[randInt(0, glitchChars.length)];
         glitching = true;
         requestAnimationFrame(tick);
@@ -102,7 +114,11 @@ const randInt = (min, max) => Math.floor(rand(min, max));
       } else {
         ok.style.opacity = '1';
         if (isLast) {
-          setTimeout(hideLoader, 350);
+          setTimeout(() => {
+            targetProgress = 100; // guarantee bar reaches 100
+            msgsDone = true;
+            tryHide();
+          }, 200);
         } else {
           scheduleNext();
         }
@@ -124,17 +140,21 @@ const randInt = (min, max) => Math.floor(rand(min, max));
       if (msgIdx >= messages.length) return;
       targetProgress = ((msgIdx + 1) / messages.length) * 100;
       addTerminalLine(messages[msgIdx], msgIdx === messages.length - 1);
-    }, 30);
+    }, 15);
   }
 
-  // Safety cap — max 3500ms in case of very slow device
-  setTimeout(hideLoader, 3500);
+  // Safety cap — max 2200ms in case of very slow device
+  setTimeout(() => {
+    targetProgress = 100;
+    msgsDone = true;
+    tryHide();
+  }, 2200);
 
   // Kick off first message
   setTimeout(() => {
     targetProgress = (1 / messages.length) * 100;
     addTerminalLine(messages[0], false);
-  }, 50);
+  }, 20);
 
   // ── Hex background for loader ──────────────────────────────
   (function loaderHex() {
