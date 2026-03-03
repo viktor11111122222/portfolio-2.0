@@ -4,6 +4,10 @@
 
 'use strict';
 
+// Always start at top on reload
+history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+
 /* ── UTIL ───────────────────────────────────────────────────── */
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
@@ -234,6 +238,9 @@ const randInt = (min, max) => Math.floor(rand(min, max));
    2. CUSTOM CURSOR
 ═══════════════════════════════════════════════════════════ */
 (function initCursor() {
+  // Skip custom cursor on touch / coarse-pointer devices (phones/tablets)
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
   const dot   = $('#cursorDot');
   const ring  = $('#cursorRing');
 
@@ -944,24 +951,27 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 (function initPersonHover() {
   const universe = $('.person-universe');
   if (!universe) return;
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
-  universe.addEventListener('mousemove', e => {
-    const rect = universe.getBoundingClientRect();
-    const x    = (e.clientX - rect.left - rect.width  / 2) / (rect.width  / 2);
-    const y    = (e.clientY - rect.top  - rect.height / 2) / (rect.height / 2);
+  let tx = 0, ty = 0, cx = 0, cy = 0;
+  let rect = universe.getBoundingClientRect();
 
-    universe.style.transform = `
-      perspective(800px)
-      rotateY(${x * 6}deg)
-      rotateX(${-y * 4}deg)
-    `;
+  const refreshRect = () => { rect = universe.getBoundingClientRect(); };
+  window.addEventListener('scroll', refreshRect, { passive: true });
+  window.addEventListener('resize', refreshRect, { passive: true });
+
+  document.addEventListener('mousemove', e => {
+    tx = clamp((e.clientX - (rect.left + rect.width  / 2)) / (rect.width  / 2), -1, 1);
+    ty = clamp((e.clientY - (rect.top  + rect.height / 2)) / (rect.height / 2), -1, 1);
   }, { passive: true });
 
-  universe.addEventListener('mouseleave', () => {
-    universe.style.transform   = '';
-    universe.style.transition  = 'transform 0.6s ease';
-    setTimeout(() => { universe.style.transition = ''; }, 600);
-  });
+  function loop() {
+    cx = lerp(cx, tx, 0.07);
+    cy = lerp(cy, ty, 0.07);
+    universe.style.transform = `perspective(800px) rotateY(${cx * 6}deg) rotateX(${-cy * 4}deg)`;
+    requestAnimationFrame(loop);
+  }
+  loop();
 })();
 
 /* ═══════════════════════════════════════════════════════════
@@ -1014,7 +1024,7 @@ document.addEventListener('visibilitychange', () => {
   }
 
   function spawnPulse() {
-    if (!edges.length) return;
+    if (!edges || !edges.length) return;
     const edge  = edges[randInt(0, edges.length)];
     const color = COLORS[randInt(0, COLORS.length)];
     pulses.push({ edge, t: 0, speed: rand(0.004, 0.016), color, size: rand(2, 4) });
@@ -1533,16 +1543,19 @@ document.addEventListener('visibilitychange', () => {
     requestAnimationFrame(draw);
   }
 
-  window.addEventListener('mousemove', e => {
-    // Keep viewport coords — scrollY added live in draw() each frame
-    mouse.clientX = e.clientX;
-    mouse.clientY = e.clientY;
-  }, { passive: true });
+  // On touch devices skip mouse interaction — hexes render as static bg
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    window.addEventListener('mousemove', e => {
+      // Keep viewport coords — scrollY added live in draw() each frame
+      mouse.clientX = e.clientX;
+      mouse.clientY = e.clientY;
+    }, { passive: true });
 
-  window.addEventListener('mouseleave', () => {
-    mouse.clientX = -9999;
-    mouse.clientY = -9999;
-  });
+    window.addEventListener('mouseleave', () => {
+      mouse.clientX = -9999;
+      mouse.clientY = -9999;
+    });
+  }
 
   let resizeTimer;
   const onResize = () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(resize, 150); };
@@ -1578,28 +1591,31 @@ document.addEventListener('visibilitychange', () => {
    24. 3D TILT — ABOUT PHOTO
 ═══════════════════════════════════════════════════════════ */
 (function initAboutTilt() {
-  const col = $('.about-visual-col');
-  if (!col) return;
+  // Target the wrap (not col) — col has data-aos which sets its own transform
+  const wrap = $('.about-photo-wrap');
+  if (!wrap) return;
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
-  const TILT = 12;
+  const TILT = 10;
+  let tx = 0, ty = 0, cx = 0, cy = 0;
+  let rect = wrap.getBoundingClientRect();
 
-  col.addEventListener('mousemove', e => {
-    const rect = col.getBoundingClientRect();
-    const x    = (e.clientX - rect.left)  / rect.width  - 0.5;
-    const y    = (e.clientY - rect.top)   / rect.height - 0.5;
+  const refreshRect = () => { rect = wrap.getBoundingClientRect(); };
+  window.addEventListener('scroll', refreshRect, { passive: true });
+  window.addEventListener('resize', refreshRect, { passive: true });
 
-    col.style.transform = `
-      perspective(900px)
-      rotateX(${-y * TILT}deg)
-      rotateY(${x  * TILT}deg)
-    `;
+  document.addEventListener('mousemove', e => {
+    tx = clamp((e.clientX - (rect.left + rect.width  / 2)) / (rect.width  / 2), -1, 1);
+    ty = clamp((e.clientY - (rect.top  + rect.height / 2)) / (rect.height / 2), -1, 1);
   }, { passive: true });
 
-  col.addEventListener('mouseleave', () => {
-    col.style.transition  = 'transform 0.7s ease';
-    col.style.transform   = '';
-    setTimeout(() => { col.style.transition = ''; }, 700);
-  });
+  function loop() {
+    cx = lerp(cx, tx, 0.07);
+    cy = lerp(cy, ty, 0.07);
+    wrap.style.transform = `perspective(900px) rotateY(${cx * TILT}deg) rotateX(${-cy * TILT}deg)`;
+    requestAnimationFrame(loop);
+  }
+  loop();
 })();
 
 /* ═══════════════════════════════════════════════════════════
@@ -2069,6 +2085,137 @@ document.addEventListener('visibilitychange', () => {
   }
 
   card.addEventListener('click', showToast);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   34. TAP-TO-REVEAL — PROJECT OVERLAY (touch only)
+═══════════════════════════════════════════════════════════ */
+(function initProjTapReveal() {
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+  let activeCard = null;
+
+  $$('.proj-card').forEach(card => {
+    card.addEventListener('click', e => {
+      const btn = e.target.closest('.proj-link-btn');
+
+      // Button tapped but overlay not yet open — block link, open card instead
+      if (btn && !card.classList.contains('is-active')) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (activeCard) activeCard.classList.remove('is-active');
+        card.classList.add('is-active');
+        activeCard = card;
+        return;
+      }
+
+      // Button tapped on already-open card — let the link work
+      if (btn) return;
+
+      // Plain card tap — toggle
+      if (card === activeCard) {
+        card.classList.remove('is-active');
+        activeCard = null;
+      } else {
+        if (activeCard) activeCard.classList.remove('is-active');
+        card.classList.add('is-active');
+        activeCard = card;
+      }
+    });
+  });
+
+  document.addEventListener('click', e => {
+    if (activeCard && !e.target.closest('.proj-card')) {
+      activeCard.classList.remove('is-active');
+      activeCard = null;
+    }
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   35. PROJECTS CAROUSEL — mobile nav: buttons + dots + counter
+═══════════════════════════════════════════════════════════ */
+(function initProjectsCarousel() {
+  if (!window.matchMedia('(max-width: 768px)').matches) return;
+
+  const grid = $('.projects-grid');
+  if (!grid) return;
+  const cards = $$('.proj-card', grid);
+  if (!cards.length) return;
+
+  let current = 0;
+
+  function scrollTo(idx) {
+    idx = Math.max(0, Math.min(idx, cards.length - 1));
+    const card = cards[idx];
+    const left = card.offsetLeft + card.offsetWidth / 2 - grid.clientWidth / 2;
+    grid.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+  }
+
+  function update(idx) {
+    current = Math.max(0, Math.min(idx, cards.length - 1));
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    prevBtn.classList.toggle('pcb-disabled', current === 0);
+    nextBtn.classList.toggle('pcb-disabled', current === cards.length - 1);
+    curEl.textContent = String(current + 1).padStart(2, '0');
+  }
+
+  /* ── Nav row: [◄] [dots] [►]  01/04 ── */
+  const navWrap = document.createElement('div');
+  navWrap.className = 'proj-carousel-nav';
+
+  const prevBtn = document.createElement('button');
+  prevBtn.className = 'proj-carousel-btn pcb-disabled';
+  prevBtn.innerHTML = '&#8592;';
+  prevBtn.setAttribute('aria-label', 'Previous project');
+  prevBtn.addEventListener('click', () => scrollTo(current - 1));
+
+  const dotsWrap = document.createElement('div');
+  dotsWrap.className = 'proj-carousel-dots';
+  cards.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'pcd' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => scrollTo(i));
+    dotsWrap.appendChild(d);
+  });
+
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'proj-carousel-btn';
+  nextBtn.innerHTML = '&#8594;';
+  nextBtn.setAttribute('aria-label', 'Next project');
+  nextBtn.addEventListener('click', () => scrollTo(current + 1));
+
+  /* counter  01 / 04 */
+  const countEl = document.createElement('div');
+  countEl.className = 'proj-carousel-count';
+  const curEl = document.createElement('span');
+  curEl.className = 'pcc-cur';
+  curEl.textContent = '01';
+  countEl.append(curEl, ` / ${String(cards.length).padStart(2, '0')}`);
+
+  navWrap.append(prevBtn, dotsWrap, nextBtn, countEl);
+  grid.insertAdjacentElement('afterend', navWrap);
+
+  /* ── Swipe hint (disappears after animation) ── */
+  const hint = document.createElement('div');
+  hint.className = 'proj-swipe-hint';
+  hint.innerHTML = '<span class="psh-l">&#8592;</span> SWIPE <span class="psh-r">&#8594;</span>';
+  navWrap.insertAdjacentElement('afterend', hint);
+  // Remove from DOM after animation ends so it doesn't take layout space
+  hint.addEventListener('animationend', () => hint.remove(), { once: true });
+
+  const dots = $$('.pcd', dotsWrap);
+
+  /* ── Sync on scroll — find card whose center is closest to viewport center ── */
+  grid.addEventListener('scroll', () => {
+    const viewCenter = grid.scrollLeft + grid.clientWidth / 2;
+    let closest = 0, minDist = Infinity;
+    cards.forEach((c, i) => {
+      const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - viewCenter);
+      if (d < minDist) { minDist = d; closest = i; }
+    });
+    update(closest);
+  }, { passive: true });
 })();
 
 console.log('%c[VICA PORTFOLIO] %cSYSTEM ONLINE', 'color:#00e5ff;font-family:monospace;font-weight:bold', 'color:#00ff9f;font-family:monospace');

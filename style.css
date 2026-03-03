@@ -617,6 +617,7 @@ body.cursor-on-input .cursor-dot { opacity: 0 !important; }
   position: relative;
   width: 440px; height: 520px;
   display: flex; align-items: center; justify-content: center;
+  will-change: transform;
 }
 
 /* Orbit Rings */
@@ -1062,34 +1063,40 @@ body.cursor-on-input .cursor-dot { opacity: 0 !important; }
   50%       { opacity: 1;   transform: translateX(-50%) scale(1.1); }
 }
 
-/* Ground glow line under person's feet */
+/* Float group — image + ground line animate as one unit */
+.about-float-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: aphFloat 6s ease-in-out infinite;
+}
+@keyframes aphFloat {
+  0%, 100% { transform: perspective(800px) translateY(0px)   rotateX(0deg); }
+  50%       { transform: perspective(800px) translateY(-12px) rotateX(-2.5deg); }
+}
+
+/* Ground glow line — no animation, lives inside float group */
 .aph-ground {
-  position: absolute;
-  bottom: 0; left: 50%; transform: translateX(-50%);
   width: 220px; height: 1px;
   background: linear-gradient(90deg, transparent, var(--cyan), var(--purple), transparent);
   box-shadow: 0 0 18px rgba(0,229,255,0.6), 0 0 40px rgba(0,229,255,0.25);
 }
 
-/* The photo — drop-shadow follows transparent alpha = glow around person not box */
+/* The photo — scaleX(-1) flips image, no animation (parent handles it) */
 .about-photo {
   position: relative;
   z-index: 2;
   max-height: 460px;
   width: auto;
   object-fit: contain;
+  transform: scaleX(-1);
   filter:
     drop-shadow(0 0 18px rgba(0,229,255,0.55))
     drop-shadow(0 0 50px rgba(0,229,255,0.2))
     drop-shadow(0 0 90px rgba(191,0,255,0.15));
-  animation: aphFloat 6s ease-in-out infinite;
-}
-@keyframes aphFloat {
-  0%, 100% { transform: scaleX(-1) translateY(0px); }
-  50%       { transform: scaleX(-1) translateY(-12px); }
 }
 
-/* Fallback SVG silhouette */
+/* Fallback SVG silhouette — no animation (parent handles it) */
 .about-photo-fallback {
   display: none;
   position: relative;
@@ -1099,7 +1106,6 @@ body.cursor-on-input .cursor-dot { opacity: 0 !important; }
     drop-shadow(0 0 18px rgba(0,229,255,0.55))
     drop-shadow(0 0 50px rgba(0,229,255,0.2))
     drop-shadow(0 0 90px rgba(191,0,255,0.15));
-  animation: aphFloat 6s ease-in-out infinite;
 }
 .about-photo-fallback svg {
   height: 100%;
@@ -1324,9 +1330,14 @@ body.cursor-on-input .cursor-dot { opacity: 0 !important; }
   background: rgba(3,3,8,0.85);
   display: flex; align-items: center; justify-content: center; gap: 1rem;
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.3s;
 }
-.proj-card:hover .proj-overlay { opacity: 1; }
+.proj-card:hover .proj-overlay { opacity: 1; pointer-events: auto; }
+/* Buttons explicitly non-interactive until overlay is revealed */
+.proj-overlay .proj-link-btn { pointer-events: none; }
+.proj-card:hover .proj-overlay .proj-link-btn { pointer-events: auto; }
+.proj-card.is-active .proj-overlay .proj-link-btn { pointer-events: auto !important; }
 .proj-link-btn {
   font-family: var(--ff-mono);
   font-size: 0.7rem;
@@ -2186,9 +2197,8 @@ body.cursor-has-label .cursor-ring {
   transform: translateY(7px) scale(0.75);
 }
 
-/* ── 3D TILT ON ABOUT VISUAL COL ── */
-.about-visual-col {
-  transform-style: preserve-3d;
+/* ── 3D TILT ON ABOUT PHOTO WRAP ── */
+.about-photo-wrap {
   will-change: transform;
 }
 
@@ -2411,3 +2421,334 @@ body.cursor-has-label .cursor-ring {
 
 /* ── HERO GRID scroll rotation ── */
 .hero-grid { will-change: transform, opacity; }
+
+/* ╔══════════════════════════════════════════════════════════╗ */
+/* ║         COMPREHENSIVE RESPONSIVE — ALL DEVICES           ║ */
+/* ╚══════════════════════════════════════════════════════════╝ */
+
+/* ── Touch / pointer-coarse: restore system cursor ────────── */
+@media (hover: none) and (pointer: coarse) {
+  html, *, *::before, *::after { cursor: auto !important; }
+  body { cursor: auto !important; }
+  a, button { cursor: pointer !important; }
+  .cursor-dot, .cursor-ring { display: none !important; }
+}
+
+/* ── ≤ 1200px — Large tablet / small laptop ───────────────── */
+@media (max-width: 1200px) {
+  .person-universe { width: 380px; height: 460px; }
+  .about-photo-wrap { height: 440px; }
+}
+
+/* ── ≤ 1024px — Tablet (augments existing) ────────────────── */
+@media (max-width: 1024px) {
+  .hero-right { min-height: 380px; }
+  .about-photo-wrap { height: 360px; }
+  .about-photo { max-height: 340px; }
+  .loader-terminal { width: min(360px, 90vw); }
+  .loader-bar-wrap { width: min(280px, 80vw); }
+}
+
+/* ── ≤ 768px — Small tablet / large phone (augments existing) */
+@media (max-width: 768px) {
+  :root { --nav-h: 60px; }
+
+  #navbar { padding: 0 1.5rem; }
+  .nav-status { display: none; }
+  /* Better touch targets in mobile menu */
+  .nav-links.open .nav-link { padding: 14px 0; font-size: 1.1rem; }
+
+  .hero-content { gap: 1.5rem; padding: 2rem 1.5rem 3rem; }
+  .hero-right { min-height: 300px; }
+  .hero-stats { gap: 1rem; }
+  .stat-number { font-size: 1.6rem; }
+  .stat-label { font-size: 0.52rem; }
+  .hero-buttons { justify-content: center; }
+
+  .about-grid { gap: 2rem; }
+  .about-photo-wrap { height: 300px; }
+  .about-photo { max-height: 280px; }
+  .aph-ground { width: 160px; }
+
+  /* Override JS-set inline size on radar canvas */
+  #radarChart { width: 280px !important; height: 280px !important; }
+
+  .section-header { margin-bottom: 2.5rem; }
+
+  .loader-terminal { width: min(320px, 90vw); font-size: 0.6rem; }
+  .loader-bar-wrap { width: min(240px, 75vw); }
+
+  /* ── Skills: single column → radar above, 2×2 card grid below ── */
+  .skills-new-layout {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+  .skills-compact-col {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    flex-direction: unset !important;
+    overflow: visible !important;
+    scroll-snap-type: unset !important;
+    gap: 0.65rem;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .sc-compact {
+    flex: unset !important;
+    scroll-snap-align: unset !important;
+  }
+  .sc-compact:hover { transform: none !important; }
+
+  /* ── Projects: horizontal scroll-snap carousel ── */
+  .projects-grid {
+    display: flex !important;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 1rem;
+    padding: 0.5rem 8vw 0.75rem;
+  }
+  .projects-grid::-webkit-scrollbar { display: none; }
+  .proj-card {
+    flex: 0 0 min(320px, 84vw) !important;
+    scroll-snap-align: center;
+  }
+  .proj-card:hover {
+    transform: none !important;
+  }
+}
+
+/* ── Projects carousel — nav row + dots + buttons ─────────── */
+.proj-carousel-nav {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-top: 0.85rem;
+}
+@media (max-width: 768px) { .proj-carousel-nav { display: flex; } }
+
+/* Prev / Next buttons */
+.proj-carousel-btn {
+  width: 36px; height: 36px;
+  border: 1px solid rgba(191,0,255,0.45);
+  border-radius: var(--radius);
+  background: rgba(3,3,8,0.97);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--ff-mono);
+  font-size: 1rem;
+  color: var(--purple);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s, transform 0.15s;
+  flex-shrink: 0;
+}
+.proj-carousel-btn:active {
+  border-color: var(--purple);
+  box-shadow: 0 0 16px rgba(191,0,255,0.5);
+  background: rgba(191,0,255,0.1);
+  transform: scale(0.9);
+}
+.proj-carousel-btn.pcb-disabled {
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+/* Dot track */
+.proj-carousel-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pcd {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(191,0,255,0.25);
+  border: 1px solid rgba(191,0,255,0.3);
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+.pcd.active {
+  background: var(--purple);
+  box-shadow: 0 0 8px var(--purple), 0 0 16px rgba(191,0,255,0.4);
+  transform: scale(1.5);
+}
+
+/* Card counter  01 / 04 */
+.proj-carousel-count {
+  font-family: var(--ff-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  color: var(--text3);
+  margin-left: 0.4rem;
+  white-space: nowrap;
+}
+.proj-carousel-count .pcc-cur {
+  color: var(--purple);
+  text-shadow: 0 0 8px rgba(191,0,255,0.6);
+}
+
+/* Swipe hint — fades out after ~4 s */
+.proj-swipe-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--ff-mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.22em;
+  color: rgba(191,0,255,0.45);
+  margin-top: 0.5rem;
+  animation: psh-lifecycle 4.5s ease 0.4s forwards;
+  pointer-events: none;
+}
+@keyframes psh-lifecycle {
+  0%   { opacity: 0; transform: translateY(4px); }
+  12%  { opacity: 1; transform: translateY(0); }
+  75%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+.psh-l { animation: psh-bounce-l 0.9s ease 0.6s 3; }
+.psh-r { animation: psh-bounce-r 0.9s ease 1.1s 3; }
+@keyframes psh-bounce-l {
+  0%, 100% { transform: translateX(0); }
+  50%       { transform: translateX(-5px); }
+}
+@keyframes psh-bounce-r {
+  0%, 100% { transform: translateX(0); }
+  50%       { transform: translateX(5px); }
+}
+
+/* ── ≤ 480px — Phone ──────────────────────────────────────── */
+@media (max-width: 480px) {
+  :root { --nav-h: 56px; }
+
+  #navbar { padding: 0 1rem; }
+  .nav-logo { font-size: 1rem; }
+
+  .container { padding: 0 1rem; }
+  .section { padding: 4rem 0; }
+  .section-header { margin-bottom: 2rem; }
+
+  /* Hero */
+  .hero-content { padding: 1.5rem 1rem 2.5rem; gap: 1.5rem; }
+  .hero-title { font-size: clamp(1.9rem, 9vw, 2.8rem) !important; }
+  .hero-subtitle { font-size: 0.82rem; }
+  .hero-stats { gap: 0.7rem; }
+  .stat-number { font-size: 1.35rem; }
+  .stat-label { font-size: 0.46rem; letter-spacing: 0.1em; }
+  .hero-buttons { flex-direction: column; align-items: stretch; }
+  .hero-buttons .btn { text-align: center; }
+  .hero-right { min-height: 250px; }
+
+  /* Person universe — smaller on phone */
+  .person-universe { width: 240px; height: 290px; }
+  .or-1 { width: 185px; height: 185px; }
+  .or-2 { width: 225px; height: 225px; }
+  .or-3 { width: 265px; height: 265px; }
+  .person-frame { width: 130px; height: 165px; }
+  .float-code { display: none; }
+  .hex-deco { display: none; }
+  .odw-3 { display: none; }
+
+  /* About */
+  .about-grid { gap: 2rem; }
+  .about-photo-wrap { height: 260px; }
+  .about-photo { max-height: 240px; }
+  .aph-ground { width: 130px; }
+  .about-intro { font-size: 1.05rem; }
+  .about-body { font-size: 0.88rem; }
+  .morphing-text-block { font-size: 0.6rem; letter-spacing: 0.2em; }
+
+  /* Skills */
+  #radarChart { width: 240px !important; height: 240px !important; }
+  .radar-wrapper { width: 240px !important; height: 240px !important; }
+
+  /* Timeline */
+  .tl-grid { gap: 32px; }
+  .tl-item { grid-template-columns: 68px 18px 1fr; gap: 0 10px; margin-bottom: 32px; }
+  .tl-line { left: 84px; }
+  .tl-year { font-size: 0.65rem; }
+  .tl-panel { padding: 18px 16px; }
+  .tl-stat-val { font-size: 1.45rem; }
+
+  /* Contact */
+  .contact-intro { font-size: 0.95rem; }
+
+  /* Footer */
+  .footer-sysbar { display: none; }
+  .footer-grid { padding: 1rem; gap: 1.5rem; }
+  .footer-content { padding: 0 1rem; }
+
+  /* Loader */
+  .loader-glitch { font-size: clamp(3rem, 18vw, 5.5rem); letter-spacing: 0.2em; }
+  .loader-tagline { font-size: 0.6rem; letter-spacing: 0.3em; }
+  .loader-terminal { width: 90vw; max-height: 140px; font-size: 0.58rem; padding: 8px 10px; }
+  .loader-bar-wrap { width: 80vw; }
+  .lc-tl { top: 12px; left: 12px; }
+  .lc-tr { top: 12px; right: 12px; }
+  .lc-bl { bottom: 12px; left: 12px; }
+  .lc-br { bottom: 12px; right: 12px; }
+}
+
+/* ── ≤ 360px — Very small phones ─────────────────────────── */
+@media (max-width: 360px) {
+  .person-universe { width: 200px; height: 245px; }
+  .or-1 { width: 150px; height: 150px; }
+  .or-2 { width: 185px; height: 185px; }
+  .or-3 { width: 220px; height: 220px; }
+  .person-frame { width: 110px; height: 140px; }
+  .hero-title { font-size: clamp(1.7rem, 10vw, 2.2rem) !important; }
+  #radarChart { width: 200px !important; height: 200px !important; }
+  .radar-wrapper { width: 200px !important; height: 200px !important; }
+  .about-photo-wrap { height: 230px; }
+  .about-photo { max-height: 210px; }
+}
+
+/* ── Project cards — TAP hint (touch devices only) ─────────── */
+.proj-tap-hint {
+  display: none; /* hidden on desktop */
+}
+@media (hover: none) and (pointer: coarse) {
+  .proj-tap-hint {
+    display: flex;
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.4rem;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .pth-ring {
+    position: absolute;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 1.5px solid var(--cyan);
+    animation: pth-pulse 2.2s ease-out infinite;
+  }
+  .pth-r1 { animation-delay: 0s; }
+  .pth-r2 { animation-delay: 0.7s; opacity: 0.55; }
+  @keyframes pth-pulse {
+    0%   { transform: scale(0.7); opacity: 0.9; }
+    100% { transform: scale(2.4); opacity: 0; }
+  }
+  .pth-label {
+    position: relative;
+    font-family: var(--ff-mono);
+    font-size: 0.52rem;
+    letter-spacing: 0.3em;
+    color: var(--cyan);
+    text-shadow: 0 0 10px var(--cyan), 0 0 20px rgba(0,229,255,0.4);
+    z-index: 1;
+  }
+  /* Hide hint + show overlay when card is tapped */
+  .proj-card.is-active .proj-tap-hint { opacity: 0; pointer-events: none; }
+  .proj-card.is-active .proj-overlay  { opacity: 1 !important; pointer-events: auto !important; }
+}

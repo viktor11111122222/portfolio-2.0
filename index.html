@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VICA | Portfolio</title>
 
-  <!-- Favicon & App Icons -->
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="apple-touch-icon" href="favicon.svg">
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><polygon points='32,1 61,17 61,47 32,63 3,47 3,17' fill='%23030308'/><polygon points='32,1 61,17 61,47 32,63 3,47 3,17' fill='none' stroke='%2300e5ff' stroke-width='1.5' opacity='0.5'/><polygon points='32,1 61,17 61,47 32,63 3,47 3,17' fill='none' stroke='%23bf00ff' stroke-width='4' opacity='0.15'/><path d='M14 18L32 48L50 18' stroke='%23bf00ff' stroke-width='14' fill='none' stroke-linecap='round' stroke-linejoin='round' opacity='0.35'/><path d='M14 18L32 48L50 18' stroke='%2300e5ff' stroke-width='4.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/><path d='M14 18L32 48L50 18' stroke='white' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round' opacity='0.3'/><circle cx='32' cy='1' r='2' fill='%2300e5ff' opacity='0.8'/><circle cx='61' cy='17' r='2' fill='%23ff0064' opacity='0.8'/><circle cx='61' cy='47' r='2' fill='%23ff0064' opacity='0.8'/><circle cx='32' cy='63' r='2' fill='%2300e5ff' opacity='0.8'/><circle cx='3' cy='47' r='2' fill='%2300e5ff' opacity='0.8'/><circle cx='3' cy='17' r='2' fill='%2300e5ff' opacity='0.8'/></svg>">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <meta name="theme-color" content="#030308">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="VICA">
 
@@ -308,18 +308,17 @@
             <!-- Ambient glows behind person -->
             <div class="aph-glow aph-cyan"></div>
             <div class="aph-glow aph-purple"></div>
-            <!-- Ground line -->
-            <div class="aph-ground"></div>
-            <!-- Replace photo.png with your transparent-bg portrait -->
-            <img
-              src="photo.png"
-              alt="Vica"
-              class="about-photo"
-              id="aboutPhoto"
-              onerror="this.style.display='none'; document.getElementById('aboutPhotoFallback').style.display='block'"
-            />
-            <!-- Fallback silhouette if no photo yet -->
-            <div class="about-photo-fallback" id="aboutPhotoFallback">
+            <!-- Float group: image + ground line animate as one unit -->
+            <div class="about-float-group">
+              <img
+                src="photo.png"
+                alt="Vica"
+                class="about-photo"
+                id="aboutPhoto"
+                onerror="this.style.display='none'; document.getElementById('aboutPhotoFallback').style.display='block'"
+              />
+              <!-- Fallback silhouette if no photo yet -->
+              <div class="about-photo-fallback" id="aboutPhotoFallback">
               <svg viewBox="0 0 200 420" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="apg" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -337,7 +336,10 @@
                 <!-- Body lower -->
                 <path d="M 35 260 L 25 420 L 85 420 L 100 300 L 115 420 L 175 420 L 165 260 Z" fill="url(#apg)" opacity="0.8"/>
               </svg>
-            </div>
+              </div>
+              <!-- Ground line inside float group — moves with image -->
+              <div class="aph-ground"></div>
+            </div><!-- /.about-float-group -->
           </div>
         </div>
       </div>
@@ -595,13 +597,18 @@
                 <a href="#" class="proj-link-btn">LIVE ↗</a>
                 <a href="#" class="proj-link-btn">CODE ↗</a>
               </div>
+              <div class="proj-tap-hint" aria-hidden="true">
+                <span class="pth-ring pth-r1"></span>
+                <span class="pth-ring pth-r2"></span>
+                <span class="pth-label">TAP</span>
+              </div>
             </div>
             <div class="proj-body">
-              <span class="proj-cat">WEB APP</span>
-              <h3 class="proj-name">CYBER DASHBOARD</h3>
-              <p>Next-gen analytics platform with real-time data visualization and AI-driven insights.</p>
+              <span class="proj-cat">WEBSITE</span>
+              <h3 class="proj-name">VELVET DECORATIONS</h3>
+              <p>Profesional made looking site, it works with decorations for celebratings, wedings...</p>
               <div class="proj-tags">
-                <span>React</span><span>Node.js</span><span>D3.js</span>
+                <span>HTML</span><span>CSS</span><span>JS</span>
               </div>
             </div>
             <div class="proj-glow"></div>
@@ -617,13 +624,18 @@
                 <a href="#" class="proj-link-btn">LIVE ↗</a>
                 <a href="#" class="proj-link-btn">CODE ↗</a>
               </div>
+              <div class="proj-tap-hint" aria-hidden="true">
+                <span class="pth-ring pth-r1"></span>
+                <span class="pth-ring pth-r2"></span>
+                <span class="pth-label">TAP</span>
+              </div>
             </div>
             <div class="proj-body">
-              <span class="proj-cat">E-COMMERCE</span>
-              <h3 class="proj-name">NEON MARKET</h3>
-              <p>Futuristic e-commerce with 3D product visualization and immersive UI experience.</p>
+              <span class="proj-cat">WEB APP</span>
+              <h3 class="proj-name">MOVIEHUB</h3>
+              <p>Website that helps you find the movie all across APP-a and WEBSITES, thru API-s.</p>
               <div class="proj-tags">
-                <span>Next.js</span><span>Stripe</span><span>Three.js</span>
+                <span>HTML</span><span>CSS</span><span>JS</span><span>FULL BACKEND</span>
               </div>
             </div>
             <div class="proj-glow"></div>
@@ -639,13 +651,18 @@
                 <a href="#" class="proj-link-btn">LIVE ↗</a>
                 <a href="#" class="proj-link-btn">CODE ↗</a>
               </div>
+              <div class="proj-tap-hint" aria-hidden="true">
+                <span class="pth-ring pth-r1"></span>
+                <span class="pth-ring pth-r2"></span>
+                <span class="pth-label">TAP</span>
+              </div>
             </div>
             <div class="proj-body">
-              <span class="proj-cat">MOBILE APP</span>
-              <h3 class="proj-name">PULSE SOCIAL</h3>
-              <p>Social platform built for the next generation with augmented reality features.</p>
+              <span class="proj-cat">WEBSITE</span>
+              <h3 class="proj-name">ORDINACIJA MARELJ</h3>
+              <p>Professionally made WEBSITE for dental clinic with full contact form and emailjs.</p>
               <div class="proj-tags">
-                <span>React Native</span><span>Firebase</span><span>ARKit</span>
+                <span>HTML</span><span>CSS</span><span>JS</span>
               </div>
             </div>
             <div class="proj-glow"></div>
@@ -661,13 +678,18 @@
                 <a href="#" class="proj-link-btn">LIVE ↗</a>
                 <a href="#" class="proj-link-btn">CODE ↗</a>
               </div>
+              <div class="proj-tap-hint" aria-hidden="true">
+                <span class="pth-ring pth-r1"></span>
+                <span class="pth-ring pth-r2"></span>
+                <span class="pth-label">TAP</span>
+              </div>
             </div>
             <div class="proj-body">
-              <span class="proj-cat">AI TOOL</span>
-              <h3 class="proj-name">NEURAL FORGE</h3>
-              <p>AI-powered code generator with natural language processing and real-time preview.</p>
+              <span class="proj-cat">EXPENSE WEB HELPER</span>
+              <h3 class="proj-name">EXPENSE TRACKER</h3>
+              <p>WEB APP that helps you with your expenses and tracking it, you can even control how much you spend.</p>
               <div class="proj-tags">
-                <span>Python</span><span>OpenAI</span><span>FastAPI</span>
+                <span>HTML</span><span>CSS</span><span>JS</span><span>NODE.JS</span><span>JSON</span><span>FULLSTACK</span>
               </div>
             </div>
             <div class="proj-glow"></div>
